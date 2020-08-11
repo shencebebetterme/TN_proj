@@ -104,6 +104,7 @@ std::tuple<ITensor,ITensor> decompV(const ITensor& V){
 class iMPS{
 public:
 int bond_dim;
+int trunc_dim;//max dim of svd
 int phys_dim;
 Index Gl,Gd,Gr; // the three indices around Gamma
 Index ll,lr; // the two indices around lambda
@@ -115,6 +116,7 @@ ITensor R,L;
 // random constructor
 iMPS(int bd, int pd){
     bond_dim = bd;
+    trunc_dim = bd;
     phys_dim = pd;
     Gl = Index(bond_dim,"Gl");
     Gd = Index(phys_dim,"Gu");
@@ -173,7 +175,6 @@ void canonicalize(){
     auto etaL = arnoldi(LM,VL);
     // normalization of VR and VL
     Cplx trLR = eltC(VR*VL*delta(Rr1,Ll1)*delta(Rr2,Ll2));
-    //Print(trLR);
     VR /= std::sqrt(trLR);
     VL /= std::sqrt(trLR);
     // eigenvalue decomposition of VR
@@ -195,7 +196,7 @@ void canonicalize(){
     Index Y_c = commonIndex(Y,Y_inv);
     //
     //get the new lambda and Gamma
-    auto [U,lambda_new,V] = svd(Y * delta(Y_r,ll) * lambda * delta(lr,X_l) * X, {Y_c});
+    auto [U,lambda_new,V] = svd(Y * delta(Y_r,ll) * lambda * delta(lr,X_l) * X, {Y_c},{"MaxDim=",trunc_dim});
     Index Ulink = commonIndex(U,lambda_new);
     Index Vlink = commonIndex(V,lambda_new);
     //Print(lambda_new);
@@ -210,6 +211,10 @@ void canonicalize(){
     Gamma = Gamma_new * delta(Vlink,Gl) * delta(Ulink,Gr);
 }
 
+//update Gamma and lambda after one layer of MPO
+void step(const ITensor& A){
+
+}
 
 };
 
