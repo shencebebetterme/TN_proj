@@ -181,10 +181,14 @@ void getR(){
     Rl2 = Index(bond_dim,"Rl2");
     Rr1 = Index(bond_dim,"Rr1");
     Rr2 = Index(bond_dim,"Rr2");
+	printf("R has dimension %d, %d, %d, %d\n", Rl1.dim(), Rl2.dim(), Rr1.dim(), Rr2.dim());
     // upper part has indices Rl1, Gd, Rl2
+	printf("obtaining R upper part\n");
+	Print(Gamma); Print(lambda);
     ITensor upper_part = Gamma * lambda * delta(ll,Gr) * delta(Gl,Rl1) * delta(lr,Rr1);
     //Print(upper_part);
     // lower part has indices Rl2, Gd, Rr2
+	printf("obtaining R lower part\n");
     ITensor lower_part = Gamma * lambda * delta(ll,Gr) * delta(Gl,Rl2) * delta(lr,Rr2);
     R = upper_part * lower_part;
 	//PrintData(R);
@@ -195,8 +199,10 @@ void getL(){
     Lr1 = Index(bond_dim,"Lr1");
     Lr2 = Index(bond_dim,"Lr2");
     // uper part has indices Ll1, Gd, Lr1
+	printf("obtaining L upper part\n");
     ITensor upper_part = lambda * Gamma * delta(lr,Gl) * delta(ll,Ll1) * delta(Gr,Lr1);
     // lower part has indices Ll2, Gd, Lr2
+	printf("obtaining L lower part\n");
     ITensor lower_part = lambda * Gamma * delta(lr,Gl) * delta(ll,Ll2) * delta(Gr,Lr2);
     L = upper_part * lower_part;
 	//PrintData(L);
@@ -206,12 +212,14 @@ void canonicalize(){
 	printf("starting canonicalization\n");
     this -> getR();
     this -> getL();
+	printf("R and L obtained\n");
 	//Print(R);
     //use arnoldi method to get the dominant eigenvector
     // R_ has indices r1,2 and primed r1,2
     // L_ has indices l1,2 and primed l1,2
     ITensor R_ = R * delta(Rl1,prime(Rr1)) * delta(Rl2,prime(Rr2));
     ITensor L_ = L * delta(Lr1,prime(Ll1)) * delta(Lr2,prime(Ll2));
+	printf("indices of R and L relabeled\n");
     auto RM = ITensorMap(R_);
     auto LM = ITensorMap(L_);
     auto VR = randomITensor(Rr1,Rr2);//store the eigenvector
@@ -278,11 +286,18 @@ void canonicalize(){
 	#else
 	auto [U,lambda_new,V] = svd(Y * X * delta(Y_r,X_l), {Y_c},{"MaxDim=",trunc_dim});
 	bond_dim = lambda_new.index(1).dim();
+	printf("\nbond dimension is%d\n", bond_dim);
 	Index Ulink = commonIndex(U,lambda_new);
     Index Vlink = commonIndex(V,lambda_new);
 	//
+	printf("\nget Gamma_new\n");
+	Print(Gamma);
+	Print(lambda);
 	ITensor Gamma_new = X_inv * delta(X_inv_r,Gl) * Gamma * delta(Gr,ll) * lambda * delta(lr,Y_inv_l);
+	Print(Gamma_new);
+	std::cout << hasIndex(Gamma_new,X_c) << " " << hasIndex(Gamma_new,Y_c) << std::endl;
 	Gamma = Gamma_new * delta(X_c,Gl) * delta(Y_c,Gr);
+	Print(Gamma);
 	lambda = lambda_new;
 	ll = Ulink;
     lr = Vlink;
@@ -346,12 +361,13 @@ int main(){
 	int iter_steps = 9;
 	ITensor A = getIsingTensor();
     iMPS m(D,phys_dim);
-    m.canonicalize();
-	for(auto i : range1(iter_steps)){
-		printf("\nstep %d\n", i);
-		m.step(A);
-		PrintData(m.lambda);
-	}
+	for (auto i : range1(2))
+    	m.canonicalize();
+	//for(auto i : range1(iter_steps)){
+	//	printf("\nstep %d\n", i);
+	//	m.step(A);
+	//	PrintData(m.lambda);
+	//}
 	PrintData(m.lambda);
 	
 }
