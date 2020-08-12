@@ -23,6 +23,8 @@ using namespace std;
 using namespace std::chrono;
 using namespace arma;
 
+double phi = 0.5*(1+sqrt(5));
+
 // to use the arnoldi method
 class ITensorMap
   {
@@ -133,6 +135,35 @@ ITensor getIsingTensor(){
 	A /= TrA;
 	return A;
 }
+// the 2d fibonacci tensor
+ITensor getFibonacciTensor(){
+    int dim0 = 3;
+    Index u(dim0);
+    Index r(dim0);
+    Index d(dim0);
+    Index l(dim0);
+    Print(u);
+    Print(r);
+    Print(d);
+    Print(l);
+    ITensor C(l,u,r,d);
+    for (auto sl : range1(dim0))
+		for (auto su : range1(dim0))
+			for (auto sr : range1(dim0))
+				for (auto sd : range1(dim0))
+				{
+					double val = 0;
+                    if ((sl==3)&&(su==3)&&(sr==3)&&(sd==3))  val = std::pow(phi,-1.0/2);
+                    if (((sl==1)&&(su==1)&&(sr==3)&&(sd==3)) || ((sl==3)&&(su==3)&&(sr==2)&&(sd==2))) val = -std::pow(phi,1.0/3);
+                    if (((sl==3)&&(su==2)&&(sr==1)&&(sd==3)) || ((sl==2)&&(su==3)&&(sr==3)&&(sd==1)) || ((sl==1)&&(su==1)&&(sr==2)&&(sd==2)) ) val = std::pow(phi,7.0/6);
+					//printf("val = %f\n", val);
+                    C.set(l(sl), r(sr), u(su), d(sd), val);
+                    //A.set(l(sl), r(sr), u(su), d(sd), 0);
+				}
+    //PrintData(C);
+    return C;
+}
+
 
 // one site invariant iMPS
 class iMPS{
@@ -153,7 +184,7 @@ iMPS(int bd, int pd){
     trunc_dim = bd;
     phys_dim = pd;
     Gl = Index(bond_dim,"Gl");
-    Gd = Index(phys_dim,"Gu");
+    Gd = Index(phys_dim,"Gd");
     Gr = Index(bond_dim,"Gr");
     Gamma = randomITensor(Gl,Gd,Gr);
     Print(Gamma);
@@ -171,7 +202,7 @@ iMPS(int bd, int pd){
     ll = commonIndex(U,S);
     lr = commonIndex(S,V);
     lambda = S;
-    Print(lambda);
+    PrintData(lambda);
 }
 // construct from given Gamma and lambda
 
@@ -181,14 +212,14 @@ void getR(){
     Rl2 = Index(bond_dim,"Rl2");
     Rr1 = Index(bond_dim,"Rr1");
     Rr2 = Index(bond_dim,"Rr2");
-	printf("R has dimension %d, %d, %d, %d\n", Rl1.dim(), Rl2.dim(), Rr1.dim(), Rr2.dim());
+	//printf("R has dimension %d, %d, %d, %d\n", Rl1.dim(), Rl2.dim(), Rr1.dim(), Rr2.dim());
     // upper part has indices Rl1, Gd, Rl2
-	printf("obtaining R upper part\n");
-	Print(Gamma); Print(lambda);
+	//printf("obtaining R upper part\n");
+	//Print(Gamma); Print(lambda);
     ITensor upper_part = Gamma * lambda * delta(ll,Gr) * delta(Gl,Rl1) * delta(lr,Rr1);
     //Print(upper_part);
     // lower part has indices Rl2, Gd, Rr2
-	printf("obtaining R lower part\n");
+	//printf("obtaining R lower part\n");
     ITensor lower_part = Gamma * lambda * delta(ll,Gr) * delta(Gl,Rl2) * delta(lr,Rr2);
     R = upper_part * lower_part;
 	//PrintData(R);
@@ -199,37 +230,36 @@ void getL(){
     Lr1 = Index(bond_dim,"Lr1");
     Lr2 = Index(bond_dim,"Lr2");
     // uper part has indices Ll1, Gd, Lr1
-	printf("obtaining L upper part\n");
+	//printf("obtaining L upper part\n");
     ITensor upper_part = lambda * Gamma * delta(lr,Gl) * delta(ll,Ll1) * delta(Gr,Lr1);
     // lower part has indices Ll2, Gd, Lr2
-	printf("obtaining L lower part\n");
+	//printf("obtaining L lower part\n");
     ITensor lower_part = lambda * Gamma * delta(lr,Gl) * delta(ll,Ll2) * delta(Gr,Lr2);
     L = upper_part * lower_part;
 	//PrintData(L);
 }
 
 void canonicalize(){
-	printf("starting canonicalization\n");
+	//printf("starting canonicalization\n");
     this -> getR();
     this -> getL();
-	printf("R and L obtained\n");
+	//printf("R and L obtained\n");
 	//Print(R);
     //use arnoldi method to get the dominant eigenvector
     // R_ has indices r1,2 and primed r1,2
     // L_ has indices l1,2 and primed l1,2
     ITensor R_ = R * delta(Rl1,prime(Rr1)) * delta(Rl2,prime(Rr2));
     ITensor L_ = L * delta(Lr1,prime(Ll1)) * delta(Lr2,prime(Ll2));
-	printf("indices of R and L relabeled\n");
+	//printf("indices of R and L relabeled\n");
     auto RM = ITensorMap(R_);
     auto LM = ITensorMap(L_);
     auto VR = randomITensor(Rr1,Rr2);//store the eigenvector
     auto VL = randomITensor(Ll1,Ll2);
     // eigen decomposition
-	printf("\nstarting arnoldi algorithm\n");
+	//printf("\nstarting arnoldi algorithm\n");
     auto etaR = arnoldi(RM,VR,{"Cutoff=",1E-7});
     auto etaL = arnoldi(LM,VL,{"Cutoff=",1E-7});
-	Print(VR);
-	Print(VL);
+	//Print(VR);Print(VL);
     // normalization of VR and VL
     Cplx trLR = eltC(VR*VL*delta(Rr1,Ll1)*delta(Rr2,Ll2));
     VR /= std::sqrt(trLR);
@@ -239,29 +269,33 @@ void canonicalize(){
     // eigenvalue decomposition of VR
     //PrintData(VR);
 	//Print(VR);
+    //printf("starting X decomp\n");
     auto [X,X_inv] = decompV(VR);
     Index X_l(bond_dim);
     Index X_inv_r(bond_dim);
     X *= delta(X.index(1),X_l);
     X_inv *= delta(X_inv.index(1),X_inv_r);
     Index X_c = commonIndex(X,X_inv);
+    //Print(X);Print(X_inv);Print(X_c);
 	//PrintData(X);
 	//PrintData(X_inv);
     // now X is a matrix X_l * X_c
     // X_inv is a matrix X_c * X_inv_r
     //PrintData(X*X_inv);
 	//Print(VL);
+    //printf("starting Y decomp\n");
     auto [Y,Y_inv] = decompV(VL);
     Index Y_r(bond_dim);
     Index Y_inv_l(bond_dim);
     Y *= delta(Y.index(1),Y_r);
     Y_inv *= delta(Y_inv.index(1),Y_inv_l);
     Index Y_c = commonIndex(Y,Y_inv);
+    //Print(Y);Print(Y_inv);Print(Y_c);
 	//PrintData(Y);
     //
     //get the new lambda and Gamma
-	printf("lambda immediately before svd\n");
-	PrintData(lambda);
+	//printf("lambda immediately before svd\n");
+	//PrintData(lambda);
 	//printf("truncation dimension is %d\n", trunc_dim);
 	//PrintData(Y * delta(Y_r,ll) * lambda * delta(lr,X_l) * X);
 	#if 0
@@ -285,24 +319,31 @@ void canonicalize(){
 	Print(Gamma);
 	#else
 	auto [U,lambda_new,V] = svd(Y * X * delta(Y_r,X_l), {Y_c},{"MaxDim=",trunc_dim});
-	bond_dim = lambda_new.index(1).dim();
-	printf("\nbond dimension is%d\n", bond_dim);
+	//bond_dim = lambda_new.index(1).dim();
+    bond_dim = trunc_dim;
+    //Print(U);Print(lambda_new);Print(V);
+	//printf("\nbond dimension is%d\n", bond_dim);
 	Index Ulink = commonIndex(U,lambda_new);
     Index Vlink = commonIndex(V,lambda_new);
 	//
-	printf("\nget Gamma_new\n");
-	Print(Gamma);
-	Print(lambda);
-	ITensor Gamma_new = X_inv * delta(X_inv_r,Gl) * Gamma * delta(Gr,ll) * lambda * delta(lr,Y_inv_l);
-	Print(Gamma_new);
-	std::cout << hasIndex(Gamma_new,X_c) << " " << hasIndex(Gamma_new,Y_c) << std::endl;
-	Gamma = Gamma_new * delta(X_c,Gl) * delta(Y_c,Gr);
-	Print(Gamma);
+	//printf("\nget Gamma_new\n");
+	//Print(Gamma);Print(lambda);
+	ITensor Gamma_new = V * X_inv * delta(X_inv_r,Gl) * Gamma * delta(Gr,ll) * lambda * delta(lr,Y_inv_l) * Y_inv * U;
+	//Print(Gamma_new);
+	//std::cout << hasIndex(Gamma_new,X_c) << " " << hasIndex(Gamma_new,Y_c) << std::endl;
+
+    Gl = Index(bond_dim);
+    Gr = Index(bond_dim);
+	Gamma = Gamma_new * delta(Vlink,Gl) * delta(Ulink,Gr);//now Gamma has index Gl Gd Gr
+    //Gamma = Gamma_new;
+    //Gl = Vlink;
+    //Gr = Ulink;
+	//Print(Gamma);
 	lambda = lambda_new;
 	ll = Ulink;
     lr = Vlink;
 	#endif 
-	printf("ending canonicalization\n");
+	//printf("ending canonicalization\n\n");
 }
 
 //update Gamma and lambda after one layer of MPO
@@ -310,6 +351,7 @@ void canonicalize(){
 // suppose dim(Au) = dim(Ad) = phys_dim, and dim(Al) = dim(Ar)
 void step(const ITensor& A){
 	//printf("\nstarting step\n");
+    //Print(Gamma);Print(lambda);
     Index Al = A.index(1);
     Index Au = A.index(2);
     Index Ar = A.index(3);
@@ -339,8 +381,8 @@ void step(const ITensor& A){
 	auto[llC,llc] = combiner(ll,Ar);
 	auto[lrC,lrc] = combiner(lr,Al);
 	lambda = lambda_new * llC * lrC;
-	printf("lambda after combining\n");
-	PrintData(lambda);
+	//printf("Gamma and lambda after combining\n");
+	//Print(Gamma);Print(lambda);
 	ll = llc;
 	lr = lrc;
 	//Print(lambda);
@@ -356,18 +398,24 @@ void step(const ITensor& A){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 int main(){
-    int D = 5;//bond dimension
+    int D = 10;//bond dimension
+	int iter_steps = 2000;
     int phys_dim = 2;
-	int iter_steps = 9;
 	ITensor A = getIsingTensor();
+    //int phys_dim = 3;
+    //ITensor A = getFibonacciTensor();
     iMPS m(D,phys_dim);
-	for (auto i : range1(2))
-    	m.canonicalize();
+    m.canonicalize();
+    //PrintData(m.lambda);
+	for (auto i : range1(iter_steps)){
+        printf("step %d\n",i);
+    	m.step(A);
+        //PrintData(m.lambda);
+    }
 	//for(auto i : range1(iter_steps)){
 	//	printf("\nstep %d\n", i);
 	//	m.step(A);
 	//	PrintData(m.lambda);
 	//}
 	PrintData(m.lambda);
-	
 }
