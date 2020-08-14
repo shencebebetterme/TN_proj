@@ -57,25 +57,18 @@ class ITensorMap
 //eigenvalue decomposition of a diagonal matrix V
 // return X and X_inverse_dagger
 std::tuple<ITensor,ITensor> decompV(const ITensor& V){
-    Index l = V.index(1);
-    Index r = V.index(2);
+    Index l = V.index(1);//Rr1
+    Index r = V.index(2);//Rr2
     //int dim = l.dim();
-    std::vector<Cplx> vec = {};
-    auto [eigvec,eigval] = eigen(V*delta(l,prime(r)),{"ErrGoal=",1E-14});
-	//PrintData(eigval);
-    Index v1 = eigval.index(1);
-    Index v2 = eigval.index(2);
-    // eigvec has index l and v2
-    //if (hasIndex(eigvec,l)) printf("\neigvec has index l\n");
-    //if (hasIndex(eigvec,r)) printf("\neigvec has index r\n");
-    //if (hasIndex(eigvec,v1)) printf("\neigvec has index v1\n");
-    //if (hasIndex(eigvec,v2)) printf("\neigvec has index v2\n");
-    //PrintData(eigvec);
-    //PrintData(eigval);
-
+    auto [eigvec,eigval] = eigen(V*delta(r,prime(l)),{"ErrGoal=",1E-14});
+	//PrintData(eigval); PrintData(eigvec);
+    //Link indices
+    Index v2 = eigval.index(1);// primed Link
+    Index v1 = eigval.index(2);// Link // commonIndex(U,D);
     //v1.addTags("v1");
     //v2.addTags("v2");
     int dim = v1.dim();
+    std::vector<Cplx> vec = {};
     for (auto i : range1(dim)){
         Cplx val = eltC(eigval,v1=i,v2=i);
         vec.push_back(val);
@@ -93,10 +86,10 @@ std::tuple<ITensor,ITensor> decompV(const ITensor& V){
     ITensor sqrt_inv_eigval = diagITensor(sqrt_inv_vec,v1,v2);
     //Print(sqrt_inv_eigval);
 
-    ITensor X = eigvec * sqrt_eigval;//X has index l and v1
+    ITensor X = eigvec * sqrt_eigval;//X has index l and v2
     //ITensor X_dag = dag(X);
-    ITensor X_inv_dag = conj(eigvec * sqrt_inv_eigval);//X_inv_dag has index l and v1
-    X_inv_dag *= delta(l,r);//X_inv_dag now has index r and v1
+    ITensor X_inv_dag = conj(eigvec * sqrt_inv_eigval);//X_inv_dag has index l and v2
+    X_inv_dag *= delta(l,r);//X_inv_dag now has index r and v2
     //PrintData(X);
     //PrintData(X_inv_dag);
     return {X,X_inv_dag};
@@ -176,6 +169,8 @@ Index ll,lr; // the two indices around lambda
 Index Rl1,Rl2,Rr1,Rr2,Ll1,Ll2,Lr1,Lr2; //indices around L and R matrix
 ITensor Gamma, lambda;
 ITensor R,L;
+Index Glam_l, Glam_r, Glam_d;
+ITensor Glam; //contraction of Gamma and lambda
 //ITensor X,Y;//to store X and Y transpose
 
 // random constructor
@@ -203,20 +198,21 @@ iMPS(int bd, int pd){
 }
 // construct from given Gamma and lambda
 
+//construct Glam from Gamma and lambda
+void getGlam(){
+    Glam_l = prime(Gl); Glam_r = prime(lr); Glam_d = prime(Gd);
+}
 // get the R and L transfer matrix
 void getR(){
 	Rl1 = Index(bond_dim,"Rl1");
     Rl2 = Index(bond_dim,"Rl2");
     Rr1 = Index(bond_dim,"Rr1");
     Rr2 = Index(bond_dim,"Rr2");
-	//printf("R has dimension %d, %d, %d, %d\n", Rl1.dim(), Rl2.dim(), Rr1.dim(), Rr2.dim());
     // upper part has indices Rl1, Gd, Rl2
-	//printf("obtaining R upper part\n");
 	//Print(Gamma); Print(lambda);
-    ITensor upper_part = ((delta(Rl1,Gl) * Gamma * delta(Gr,ll)) * lambda) * delta(lr,Rr1);
+    ITensor upper_part = delta(Rl1,Gl) * Gamma * delta(Gr,ll) * lambda * delta(lr,Rr1);
     // lower part has indices Rl2, Gd, Rr2
-	//printf("obtaining R lower part\n");
-    ITensor lower_part = ((delta(Rl2,Gl) * Gamma * delta(Gr,ll)) * lambda) * delta(lr,Rr2);
+    ITensor lower_part = delta(Rl2,Gl) * conj(Gamma) * delta(Gr,ll) * conj(lambda) * delta(lr,Rr2);
     //PrintData(upper_part);PrintData(lower_part);
     R = upper_part * lower_part;
 	//PrintData(R);
@@ -227,67 +223,84 @@ void getL(){
     Lr1 = Index(bond_dim,"Lr1");
     Lr2 = Index(bond_dim,"Lr2");
     // uper part has indices Ll1, Gd, Lr1
-	//printf("obtaining L upper part\n");
-    ITensor upper_part = delta(Ll1,ll) * (lambda * (delta(lr,Gl) * Gamma * delta(Gr,Lr1)));
+    ITensor upper_part = delta(Ll1,ll) * lambda * delta(lr,Gl) * Gamma * delta(Gr,Lr1);
     // lower part has indices Ll2, Gd, Lr2
-	//printf("obtaining L lower part\n");
-    ITensor lower_part = delta(Ll2,ll) * (lambda * (delta(lr,Gl) * Gamma * delta(Gr,Lr2)));
+    ITensor lower_part = delta(Ll2,ll) * conj(lambda) * delta(lr,Gl) * conj(Gamma) * delta(Gr,Lr2);
     L = upper_part * lower_part;
 	//PrintData(L);
 }
 
+double calcEntropy(){
+    double ee = 0;
+    Index l1 = lambda.index(1);
+    Index l2 = lambda.index(2);
+    for ( auto i : range1(l1.dim())){
+        double val = lambda.elt(l1=i,l2=i);
+        ee += -2 * std::pow(val,2) * std::log(val); 
+    }
+    return ee;
+}
+
 void canonicalize(){
-	printf("\nstarting canonicalization\n");
+	//printf("\n\n\n\n\n starting canonicalization\n");
     this -> getR();
     this -> getL();
-	//printf("R and L obtained\n");
-	//Print(R);
-    //use arnoldi method to get the dominant eigenvector
-    // R_ has indices r1,2 and primed r1,2
-    // L_ has indices l1,2 and primed l1,2
+    //PrintData(R);
+    ITensor R_copy = R;
     //PrintData(R); PrintData(L);
     R *= delta(Rl1,prime(Rr1));
     R *= delta(Rl2,prime(Rr2));
-    L *= delta(Lr1,prime(Ll1));
-    L *= delta(Lr2,prime(Ll2));
-    ITensor TR = R;
-    TR *= delta(Rr1,prime(Rl1));
-    TR *= delta(Rr2,prime(Rl2));
-
-	//printf("indices of R and L relabeled\n");
     auto RM = ITensorMap(R);
-    auto LM = ITensorMap(L);
     auto VR = randomITensor(Rr1,Rr2);//store the eigenvector
-    auto VL = randomITensor(Ll1,Ll2);
-    // eigen decomposition
-	//printf("\nstarting arnoldi algorithm\n");
     auto etaR = arnoldi(RM,VR,{"ErrGoal=",1E-14});
-    auto etaL = arnoldi(LM,VL,{"ErrGoal=",1E-14});
+    // use transpoes(R) to get the left eigenvalue of L
+    #define USE_R_TRANSPOSE 1
+    #if USE_R_TRANSPOSE
+        ITensor TR = R_copy;
+        TR *= delta(Rr1,prime(Rl1));
+        TR *= delta(Rr2,prime(Rl2));//now TR has indices Rl1,2 and primed Rl1,2
+        auto RM_T = ITensorMap(TR);
+        auto VL = randomITensor(Rl1,Rl2);
+        auto etaL = arnoldi(RM_T,VL,{"ErrGoal=",1E-14});
+    #else
+        L *= delta(Lr1,prime(Ll1));
+        L *= delta(Lr2,prime(Ll2));
+        auto LM = ITensorMap(L);
+        auto VL = randomITensor(Ll1,Ll2);
+        auto etaL = arnoldi(LM,VL,{"ErrGoal=",1E-14});
+    #endif
+    //
+    //normalize s.t. now the dominant right eigenvalue becomes 1
+    //then the dominant left eigenvalue also becomes 1
+    //a transfer matrix is made up of two copies of Gamma and lambda
     Gamma /= std::sqrt(etaR);
-    lambda /= std::sqrt(etaR);
-    std::cout << "right dominant eigenvalue of R is " << etaR << std::endl;
-    std::cout << "left dominant eigenvalue of L is " << etaL << std::endl;
-    //PrintData(VR);PrintData(VL);
-	//Print(VR);Print(VL);
-    // normalization of VR and VL
+    //lambda /= std::sqrt(etaR);
+    //PrintData(etaR); PrintData(etaL); PrintData(VR);PrintData(VL);
+    // normalization of eigenvector is already implemented by the eigen decomposition
     Cplx trR = eltC(VR*VR);
     Cplx trL = eltC(VL*VL);
     Cplx phaseR = trR / std::abs(trR);
     Cplx phaseL = trL / std::abs(trL);
     VR /= phaseR;
     VL /= phaseL;
-    Cplx trLR = eltC(VR*VL*delta(Rr1,Ll1)*delta(Rr2,Ll2));
+    //
+    #if USE_R_TRANSPOSE
+        Cplx trLR = eltC(VR*VL*delta(Rr1,Rl1)*delta(Rr2,Rl2));
+    #else
+        Cplx trLR = eltC(VR*VL*delta(Rr1,Ll1)*delta(Rr2,Ll2));
+    #endif
     //Cplx phaseLR = trLR / std::abs(trLR);
-    std::cout << "trace is " << trLR << std::endl;
+    //std::cout << "trace is " << trLR << std::endl;
     trLR = std::abs(trLR);
     VR /= std::sqrt(trLR);
     VL /= std::sqrt(trLR);
-	//PrintData(VR);
-	//PrintData(VL);
+    //printf("normalized eigenvectors\n");
+	//PrintData(VR); PrintData(VL);
     // eigenvalue decomposition of VR
-    //PrintData(VR);
 	//Print(VR);
     //printf("starting X decomp\n");
+    //PrintData(VR);
+    // VR and VL are real symmetric matrices
     auto [X,X_inv] = decompV(VR);
     Index X_l(bond_dim);
     Index X_inv_r(bond_dim);
@@ -295,13 +308,13 @@ void canonicalize(){
     X_inv *= delta(X_inv.index(1),X_inv_r);
     Index X_c = commonIndex(X,X_inv);
     //Print(X);Print(X_inv);Print(X_c);
-	//PrintData(X);
-	//PrintData(X_inv);
+	//PrintData(X); PrintData(X_inv);
     // now X is a matrix X_l * X_c
     // X_inv is a matrix X_c * X_inv_r
     //PrintData(X*X_inv);
-	//Print(VL);
+	//
     //printf("starting Y decomp\n");
+    //Print(VL);
     auto [Y,Y_inv] = decompV(VL);
     Index Y_r(bond_dim);
     Index Y_inv_l(bond_dim);
@@ -309,13 +322,15 @@ void canonicalize(){
     Y_inv *= delta(Y_inv.index(1),Y_inv_l);
     Index Y_c = commonIndex(Y,Y_inv);
     //Print(Y);Print(Y_inv);Print(Y_c);
-	//PrintData(Y);
+	//PrintData(Y); PrintData(Y_inv);
     //
     //get the new lambda and Gamma
 	//printf("lambda immediately before svd\n");PrintData(lambda);
 	//printf("truncation dimension is %d\n", trunc_dim);
 	//PrintData(Y * delta(Y_r,ll) * lambda * delta(lr,X_l) * X);
-	#if 1
+    //
+    // different scheme
+	#if 0
     auto [U,lambda_new,V] = svd((Y * delta(Y_r,ll)) * lambda * (delta(lr,X_l) * X), {Y_c},{"MaxDim=",trunc_dim,"ErrGoal=",1E-14});
 	bond_dim = trunc_dim;
 	//printf("bond dimension is %f\n", bond_dim);
@@ -323,11 +338,6 @@ void canonicalize(){
     Index Vlink = commonIndex(V,lambda_new);
     //Print(lambda_new);
     // update lambda and restore the indices
-    lambda = lambda_new;
-	//printf("lambda after svd\n");
-	//PrintData(lambda);
-    ll = Ulink;
-    lr = Vlink;
     //Print(lambda);
     // update Gamma
     ITensor Gamma_new = V * X_inv * delta(X_inv_r,Gl) * Gamma * delta(Gr,Y_inv_l) * Y_inv * U;
@@ -336,9 +346,13 @@ void canonicalize(){
     Gr = Index(bond_dim,"Gr");
     Gamma = Gamma_new * delta(Vlink,Gl) * delta(Ulink,Gr);
 	//Print(Gamma);
+    lambda = lambda_new;
+    ll = Ulink;
+    lr = Vlink;
 	#else
-	auto [U,lambda_new,V] = svd(Y * delta(Y_r,X_l) * X , {Y_c},{"MaxDim=",trunc_dim});
-    PrintData(lambda_new);
+    //PrintData(lambda);
+	auto [U,lambda_new,V] = svd(Y * delta(Y_r,X_l) * X , {Y_c},{"MaxDim=",trunc_dim,"MinDim=",trunc_dim});
+    //PrintData(lambda_new);
 	//bond_dim = lambda_new.index(1).dim();
     bond_dim = trunc_dim;
     //Print(U);Print(lambda_new);Print(V);
@@ -348,12 +362,14 @@ void canonicalize(){
 	//
 	//printf("\nget Gamma_new\n");
 	//Print(Gamma);Print(lambda);
+    //PrintData(V); PrintData(X_inv); PrintData(Gamma * delta(Gr,ll) * lambda); PrintData(Y_inv); PrintData(U);
 	ITensor Gamma_new = V * X_inv * ((delta(X_inv_r,Gl) * Gamma * delta(Gr,ll)) * lambda) * delta(lr,Y_inv_l) * Y_inv * U;
+    //PrintData(Gamma_new);
 	//Print(Gamma_new);
 	//std::cout << hasIndex(Gamma_new,X_c) << " " << hasIndex(Gamma_new,Y_c) << std::endl;
 
-    Gl = Index(bond_dim);
-    Gr = Index(bond_dim);
+    Gl = Index(bond_dim,"Gl");
+    Gr = Index(bond_dim,"Gr");
 	Gamma = Gamma_new * delta(Vlink,Gl) * delta(Ulink,Gr);//now Gamma has index Gl Gd Gr
     //Gamma = Gamma_new;
     //Gl = Vlink;
@@ -363,7 +379,7 @@ void canonicalize(){
 	ll = Ulink;
     lr = Vlink;
 	#endif 
-	printf("ending canonicalization\n");
+	//printf("ending canonicalization\n");
     //getR(); getL(); PrintData(R*delta(Rr1,Rr2)); PrintData(L*delta(Ll1,Ll2));
 }
 
@@ -372,12 +388,14 @@ void canonicalize(){
 // suppose dim(Au) = dim(Ad) = phys_dim, and dim(Al) = dim(Ar)
 void step(const ITensor& A){
 	//printf("\nstarting step\n");
-    //Print(Gamma);Print(lambda);
     Index Al = A.index(1);
     Index Au = A.index(2);
     Index Ar = A.index(3);
     Index Ad = A.index(4);
-	if (!(Au.dim()==phys_dim && Ad.dim()==phys_dim)) printf("\ndimension of A doesn't match\n");
+	if (!(Au.dim()==phys_dim && Ad.dim()==phys_dim)) {
+        printf("\ndimension of A doesn't match\n");
+        std::abort();
+    }
 	//
     //PrintData(Gamma);
 	ITensor Gamma_new = Gamma * delta(Gd,Au) * A;
@@ -407,6 +425,7 @@ void step(const ITensor& A){
 	auto[llC,llc] = combiner(ll,Ar);
 	auto[lrC,lrc] = combiner(lr,Al);
 	lambda = lambda_new * llC * lrC;
+    //PrintData(lambda);
 	//printf("Gamma and lambda after combining\n");
 	//Print(Gamma);Print(lambda);
 	ll = llc;
@@ -430,7 +449,8 @@ double getError(const ITensor& A, const ITensor& B){
     std::vector<double> Avec = {};
     //std::vector<double> Bvec = {};
     std::vector<double> diff = {};
-    for (auto i : range1(a1.dim())){
+    int comp_dim = a1.dim() < b1.dim() ? a1.dim() : b1.dim();
+    for (auto i : range1(comp_dim)){
         //printf("%d\n",i);
         double valA = elt(A,a1=i,a2=i);
         double valB = elt(B,b1=i,b2=i);
@@ -438,8 +458,10 @@ double getError(const ITensor& A, const ITensor& B){
         //Bvec.push_back(valB);
         diff.push_back(valA-valB);
     }
-    double norm_diff = norm(diagITensor(diff,a1,a2));
-    double norm_org = norm(diagITensor(Avec,a1,a2));
+    Index i1 = Index(comp_dim);
+    Index i2 = Index(comp_dim);
+    double norm_diff = norm(diagITensor(diff,i1,i2));
+    double norm_org = norm(diagITensor(Avec,i1,i2));
     //printf("norm calculated\n");
     return (norm_diff/norm_org);
 }
@@ -464,8 +486,8 @@ void setValue(iMPS& m){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 int main(){
-    int D = 2;//bond dimension
-    int max_iter_steps = 100;
+    int D = 5;//bond dimension
+    int max_iter_steps = 500;
     int check_err_interval = 10;
     double err_threshold = 1E-5;
     //int phys_dim = 2;
@@ -473,20 +495,26 @@ int main(){
     int phys_dim = 3;
     ITensor A = getFibonacciTensor();
     iMPS m(D,phys_dim);
-    setValue(m);
-    PrintData(m.lambda); PrintData(m.Gamma);
+    //setValue(m);
     m.canonicalize();
-    m.canonicalize();
-    m.canonicalize();
-    m.canonicalize();
+    printf("norm of lambda is %f\n\n", norm(m.lambda));
+    //m.canonicalize();
+    //PrintData(m.lambda); PrintData(m.Gamma);
+    //for (auto i : range1(100)){
+    //    //m.canonicalize();
+    //    m.step(A);
+    //    //PrintData(m.lambda);
+    //}
     //m.canonicalize();
     //PrintData(m.lambda);
     //PrintData(m.lambda);
     //PrintData(m.lambda);
-    #if 0
+    #if 1
 	for (auto i : range1(max_iter_steps)){
-        printf("step %d\n",i);
+        //printf("step %d\n",i);
     	m.step(A);
+        //PrintData(m.lambda);
+        //printf("norm of lambda is %f\n\n", norm(m.lambda));
         //check error every 100 steps
         if(i%check_err_interval==1) {
             printf("step %d\n",i);
@@ -494,8 +522,10 @@ int main(){
             m.step(A); i+=1;
             ITensor lambda_current = m.lambda;
             //double err = 0.1;
+            printf("Entanglement entropy is %f\n", m.calcEntropy());
             double err = getError(lambda_current,lambda_previous);
             printf("error is %f\n\n", err);
+            
             if (err<err_threshold) break;
         }
     }

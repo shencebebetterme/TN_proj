@@ -1,0 +1,1700 @@
+step 1
+norm of lambda is 0.999999
+
+step 1
+Entanglement entropy is 1.051235
+error is 0.234479
+
+step 2
+norm of lambda is 0.925717
+
+step 3
+norm of lambda is 0.725133
+
+step 4
+norm of lambda is 0.959754
+
+step 5
+norm of lambda is 0.958918
+
+step 6
+norm of lambda is 1.018268
+
+step 7
+norm of lambda is 0.873535
+
+step 8
+norm of lambda is 0.596319
+
+step 9
+norm of lambda is 0.896478
+
+step 10
+norm of lambda is 0.779769
+
+step 11
+norm of lambda is 0.898144
+
+step 11
+Entanglement entropy is 0.742828
+error is 0.020295
+
+step 12
+norm of lambda is 0.875328
+
+step 13
+norm of lambda is 0.799371
+
+step 14
+norm of lambda is 1.449424
+
+step 15
+norm of lambda is 0.641451
+
+step 16
+norm of lambda is 0.862894
+
+step 17
+norm of lambda is 0.740526
+
+step 18
+norm of lambda is 1.152723
+
+step 19
+norm of lambda is 0.870719
+
+step 20
+norm of lambda is 0.877614
+
+step 21
+norm of lambda is 0.666795
+
+step 21
+Entanglement entropy is 0.645642
+error is 0.324794
+
+step 22
+norm of lambda is 0.798045
+
+step 23
+norm of lambda is 0.882080
+
+step 24
+norm of lambda is 0.710349
+
+step 25
+norm of lambda is 0.684568
+
+step 26
+norm of lambda is 1.022590
+
+step 27
+norm of lambda is 0.799826
+
+step 28
+norm of lambda is 0.952965
+
+step 29
+norm of lambda is 0.885970
+
+step 30
+norm of lambda is 0.759636
+
+step 31
+norm of lambda is 0.865399
+
+step 31
+Entanglement entropy is 0.558810
+error is 0.622830
+
+step 32
+norm of lambda is 0.404311
+
+step 33
+norm of lambda is 0.779550
+
+step 34
+norm of lambda is 0.894743
+
+step 35
+norm of lambda is 0.885312
+
+step 36
+norm of lambda is 0.783750
+
+step 37
+norm of lambda is 0.814315
+
+step 38
+norm of lambda is 1.010356
+
+step 39
+norm of lambda is 0.894951
+
+step 40
+norm of lambda is 0.732632
+
+step 41
+norm of lambda is 0.559987
+
+step 41
+Entanglement entropy is 0.156117
+error is 0.733638
+
+step 42
+norm of lambda is 0.718782
+
+step 43
+norm of lambda is 1.235546
+
+step 44
+norm of lambda is 0.795855
+
+step 45
+norm of lambda is 0.894661
+
+step 46
+norm of lambda is 0.762077
+
+step 47
+norm of lambda is 0.763944
+
+step 48
+norm of lambda is 0.807522
+
+step 49
+norm of lambda is 0.376105
+
+step 50
+norm of lambda is 0.920903
+
+step 51
+norm of lambda is 0.867009
+
+step 51
+Entanglement entropy is -56.244668
+error is 0.862336
+
+step 52
+norm of lambda is 0.599213
+
+step 53
+norm of lambda is 1.266935
+
+step 54
+norm of lambda is 0.966655
+
+step 55
+norm of lambda is 1.352489
+
+step 56
+norm of lambda is 0.509366
+
+step 57
+norm of lambda is 1.093723
+
+step 58
+norm of lambda is 0.757753
+
+step 59
+norm of lambda is 1.051047
+
+step 60
+norm of lambda is 0.556881
+
+step 61
+norm of lambda is 1.219814
+
+step 61
+Entanglement entropy is 0.722467
+error is 0.735077
+
+step 62
+norm of lambda is 3.162879
+
+step 63
+norm of lambda is 0.526794
+
+step 64
+norm of lambda is 0.949543
+
+step 65
+norm of lambda is 1.112439
+
+step 66
+norm of lambda is 0.806643
+
+step 67
+norm of lambda is 1.445721
+
+step 68
+norm of lambda is 0.996924
+
+step 69
+norm of lambda is 3.340658
+
+step 70
+norm of lambda is 0.645391
+
+step 71
+norm of lambda is 1.642331
+
+step 71
+Entanglement entropy is 0.655046
+error is 0.636004
+
+step 72
+norm of lambda is 0.893726
+
+step 73
+norm of lambda is 0.820501
+
+step 74
+norm of lambda is 0.777418
+
+step 75
+norm of lambda is 0.754008
+
+step 76
+norm of lambda is 2.227480
+
+step 77
+norm of lambda is 0.449637
+
+step 78
+norm of lambda is 1.317270
+
+step 79
+norm of lambda is 0.474619
+
+step 80
+norm of lambda is 1.966728
+
+step 81
+norm of lambda is 1.991457
+
+step 81
+Entanglement entropy is 0.522013
+error is 2.211993
+
+step 82
+norm of lambda is 1.106204
+
+step 83
+norm of lambda is 0.799525
+
+step 84
+norm of lambda is 0.670242
+
+step 85
+norm of lambda is 0.908442
+
+step 86
+norm of lambda is 1.087772
+
+step 87
+norm of lambda is 1.331491
+
+step 88
+norm of lambda is 0.297111
+
+step 89
+norm of lambda is 1.039426
+
+step 90
+norm of lambda is 2.712739
+
+step 91
+norm of lambda is 0.772453
+
+step 91
+Entanglement entropy is 0.509875
+error is 0.453351
+
+step 92
+norm of lambda is 0.784559
+
+step 93
+norm of lambda is 0.885834
+
+step 94
+norm of lambda is 1.734802
+
+step 95
+norm of lambda is 0.307187
+
+step 96
+norm of lambda is 0.810186
+
+step 97
+norm of lambda is 0.978487
+
+step 98
+norm of lambda is 0.533497
+
+step 99
+norm of lambda is 2.207059
+
+step 100
+norm of lambda is 0.723722
+
+step 101
+norm of lambda is 0.711911
+
+step 101
+Entanglement entropy is 0.711637
+error is 0.279984
+
+step 102
+norm of lambda is 0.774306
+
+step 103
+norm of lambda is 0.857060
+
+step 104
+norm of lambda is 0.967933
+
+step 105
+norm of lambda is 0.707317
+
+step 106
+norm of lambda is 1.391828
+
+step 107
+norm of lambda is 0.633256
+
+step 108
+norm of lambda is 0.679450
+
+step 109
+norm of lambda is 1.488029
+
+step 110
+norm of lambda is 0.431839
+
+step 111
+norm of lambda is 0.886939
+
+step 111
+Entanglement entropy is 0.692625
+error is 0.229906
+
+step 112
+norm of lambda is 0.750576
+
+step 113
+norm of lambda is 0.810810
+
+step 114
+norm of lambda is 0.959039
+
+step 115
+norm of lambda is 0.939855
+
+step 116
+norm of lambda is 0.976590
+
+step 117
+norm of lambda is 0.814467
+
+step 118
+norm of lambda is 0.501532
+
+step 119
+norm of lambda is 0.744837
+
+step 120
+norm of lambda is 0.708432
+
+step 121
+norm of lambda is 1.384533
+
+step 121
+Entanglement entropy is 0.324772
+error is 3.272187
+
+step 122
+norm of lambda is 1.005498
+
+step 123
+norm of lambda is 0.935845
+
+step 124
+norm of lambda is 0.656216
+
+step 125
+norm of lambda is 0.898349
+
+step 126
+norm of lambda is 0.857032
+
+step 127
+norm of lambda is 0.862707
+
+step 128
+norm of lambda is 0.902038
+
+step 129
+norm of lambda is 0.811634
+
+step 130
+norm of lambda is 0.582423
+
+step 131
+norm of lambda is 1.228525
+
+step 131
+Entanglement entropy is 0.668723
+error is 1.105484
+
+step 132
+norm of lambda is 0.824363
+
+step 133
+norm of lambda is 0.780005
+
+step 134
+norm of lambda is 0.774926
+
+step 135
+norm of lambda is 0.904582
+
+step 136
+norm of lambda is 0.611400
+
+step 137
+norm of lambda is 0.853993
+
+step 138
+norm of lambda is 1.512712
+
+step 139
+norm of lambda is 0.641784
+
+step 140
+norm of lambda is 0.585890
+
+step 141
+norm of lambda is 0.867705
+
+step 141
+Entanglement entropy is 0.730142
+error is 0.328526
+
+step 142
+norm of lambda is 0.827815
+
+step 143
+norm of lambda is 0.756426
+
+step 144
+norm of lambda is 0.921112
+
+step 145
+norm of lambda is 0.761478
+
+step 146
+norm of lambda is 3.382957
+
+step 147
+norm of lambda is 0.614671
+
+step 148
+norm of lambda is 0.924168
+
+step 149
+norm of lambda is 0.913381
+
+step 150
+norm of lambda is 0.868044
+
+step 151
+norm of lambda is 1.080535
+
+step 151
+Entanglement entropy is 0.716530
+error is 0.562552
+
+step 152
+norm of lambda is 0.653367
+
+step 153
+norm of lambda is 0.758155
+
+step 154
+norm of lambda is 0.812170
+
+step 155
+norm of lambda is 0.850802
+
+step 156
+norm of lambda is 0.877858
+
+step 157
+norm of lambda is 0.890712
+
+step 158
+norm of lambda is 0.584524
+
+step 159
+norm of lambda is 0.942049
+
+step 160
+norm of lambda is 0.650318
+
+step 161
+norm of lambda is 1.025708
+
+step 161
+Entanglement entropy is 0.596330
+error is 0.476439
+
+step 162
+norm of lambda is 0.742044
+
+step 163
+norm of lambda is 0.608190
+
+step 164
+norm of lambda is 0.865584
+
+step 165
+norm of lambda is 0.832973
+
+step 166
+norm of lambda is 0.833163
+
+step 167
+norm of lambda is 4.280052
+
+step 168
+norm of lambda is 0.586587
+
+step 169
+norm of lambda is 0.721205
+
+step 170
+norm of lambda is 0.492193
+
+step 171
+norm of lambda is 0.927746
+
+step 171
+Entanglement entropy is 0.736700
+error is 0.195796
+
+step 172
+norm of lambda is 0.784585
+
+step 173
+norm of lambda is 2.390560
+
+step 174
+norm of lambda is 0.417938
+
+step 175
+norm of lambda is 0.734906
+
+step 176
+norm of lambda is 0.471087
+
+step 177
+norm of lambda is 0.480075
+
+step 178
+norm of lambda is 0.863055
+
+step 179
+norm of lambda is 0.950002
+
+step 180
+norm of lambda is 0.893260
+
+step 181
+norm of lambda is 0.576696
+
+step 181
+Entanglement entropy is 1.022078
+error is 0.500856
+
+step 182
+norm of lambda is 0.745198
+
+step 183
+norm of lambda is 0.699510
+
+step 184
+norm of lambda is 0.948682
+
+step 185
+norm of lambda is 0.798931
+
+step 186
+norm of lambda is 0.902641
+
+step 187
+norm of lambda is 0.474427
+
+step 188
+norm of lambda is 1.050394
+
+step 189
+norm of lambda is 1.008468
+
+step 190
+norm of lambda is 0.997105
+
+step 191
+norm of lambda is 0.812814
+
+step 191
+Entanglement entropy is 0.670438
+error is 0.216832
+
+step 192
+norm of lambda is 0.920771
+
+step 193
+norm of lambda is 0.910231
+
+step 194
+norm of lambda is 0.959038
+
+step 195
+norm of lambda is 0.832785
+
+step 196
+norm of lambda is 0.793994
+
+step 197
+norm of lambda is 0.825046
+
+step 198
+norm of lambda is 0.925326
+
+step 199
+norm of lambda is 0.947301
+
+step 200
+norm of lambda is 0.620262
+
+step 201
+norm of lambda is 0.654747
+
+step 201
+Entanglement entropy is 0.712345
+error is 0.153670
+
+step 202
+norm of lambda is 1.266542
+
+step 203
+norm of lambda is 0.621570
+
+step 204
+norm of lambda is 6.033104
+
+step 205
+norm of lambda is 0.964705
+
+step 206
+norm of lambda is 1.364847
+
+step 207
+norm of lambda is 0.479483
+
+step 208
+norm of lambda is 0.497583
+
+step 209
+norm of lambda is 0.738701
+
+step 210
+norm of lambda is 0.675007
+
+step 211
+norm of lambda is 3.750516
+
+step 211
+Entanglement entropy is 0.704878
+error is 3.609352
+
+step 212
+norm of lambda is 2.970023
+
+step 213
+norm of lambda is 0.697689
+
+step 214
+norm of lambda is 0.395342
+
+step 215
+norm of lambda is 0.816716
+
+step 216
+norm of lambda is 1.368708
+
+step 217
+norm of lambda is 0.868987
+
+step 218
+norm of lambda is 1.235697
+
+step 219
+norm of lambda is 0.398972
+
+step 220
+norm of lambda is 0.647647
+
+step 221
+norm of lambda is 0.834488
+
+step 221
+Entanglement entropy is 0.814311
+error is 0.353331
+
+step 222
+norm of lambda is 1.059331
+
+step 223
+norm of lambda is 0.402825
+
+step 224
+norm of lambda is 0.899959
+
+step 225
+norm of lambda is 0.920000
+
+step 226
+norm of lambda is 0.827139
+
+step 227
+norm of lambda is 0.990915
+
+step 228
+norm of lambda is 1.692449
+
+step 229
+norm of lambda is 0.728339
+
+step 230
+norm of lambda is 0.863952
+
+step 231
+norm of lambda is 0.758456
+
+step 231
+Entanglement entropy is 0.701452
+error is 0.073335
+
+step 232
+norm of lambda is 1.288013
+
+step 233
+norm of lambda is 1.085683
+
+step 234
+norm of lambda is 0.598933
+
+step 235
+norm of lambda is 1.150264
+
+step 236
+norm of lambda is 0.754882
+
+step 237
+norm of lambda is 0.783582
+
+step 238
+norm of lambda is 0.933197
+
+step 239
+norm of lambda is 0.267702
+
+step 240
+norm of lambda is 2.055648
+
+step 241
+norm of lambda is 0.897294
+
+step 241
+Entanglement entropy is 0.711717
+error is 0.497889
+
+step 242
+norm of lambda is 1.488460
+
+step 243
+norm of lambda is 0.841791
+
+step 244
+norm of lambda is 0.984945
+
+step 245
+norm of lambda is 0.894821
+
+step 246
+norm of lambda is 0.830825
+
+step 247
+norm of lambda is 0.533594
+
+step 248
+norm of lambda is 1.129749
+
+step 249
+norm of lambda is 0.359908
+
+step 250
+norm of lambda is 1.405363
+
+step 251
+norm of lambda is 0.840705
+
+step 251
+Entanglement entropy is 0.329352
+error is 0.577410
+
+step 252
+norm of lambda is 0.851068
+
+step 253
+norm of lambda is 0.839053
+
+step 254
+norm of lambda is 0.852412
+
+step 255
+norm of lambda is 1.184371
+
+step 256
+norm of lambda is 0.888852
+
+step 257
+norm of lambda is 1.038994
+
+step 258
+norm of lambda is 0.695564
+
+step 259
+norm of lambda is 1.789459
+
+step 260
+norm of lambda is 0.866661
+
+step 261
+norm of lambda is 1.964568
+
+step 261
+Entanglement entropy is 0.743322
+error is 1.384307
+
+step 262
+norm of lambda is 0.755939
+
+step 263
+norm of lambda is 1.104753
+
+step 264
+norm of lambda is 0.742662
+
+step 265
+norm of lambda is 1.023211
+
+step 266
+norm of lambda is 6.779243
+
+step 267
+norm of lambda is 0.623546
+
+step 268
+norm of lambda is 1.111599
+
+step 269
+norm of lambda is 0.921946
+
+step 270
+norm of lambda is 1.030646
+
+step 271
+norm of lambda is 0.747482
+
+step 271
+Entanglement entropy is 0.571280
+error is 0.346806
+
+step 272
+norm of lambda is 1.089591
+
+step 273
+norm of lambda is 0.553679
+
+step 274
+norm of lambda is 0.984681
+
+step 275
+norm of lambda is 0.615283
+
+step 276
+norm of lambda is 0.845620
+
+step 277
+norm of lambda is 0.750603
+
+step 278
+norm of lambda is 0.650815
+
+step 279
+norm of lambda is 0.885728
+
+step 280
+norm of lambda is 0.628293
+
+step 281
+norm of lambda is 0.955288
+
+step 281
+Entanglement entropy is 0.731420
+error is 0.487767
+
+step 282
+norm of lambda is 0.953660
+
+step 283
+norm of lambda is 0.931532
+
+step 284
+norm of lambda is 0.990186
+
+step 285
+norm of lambda is 1.061874
+
+step 286
+norm of lambda is 0.822478
+
+step 287
+norm of lambda is 0.995276
+
+step 288
+norm of lambda is 0.824568
+
+step 289
+norm of lambda is 0.607335
+
+step 290
+norm of lambda is 0.801441
+
+step 291
+norm of lambda is 0.940289
+
+step 291
+Entanglement entropy is 0.683609
+error is 0.299551
+
+step 292
+norm of lambda is 1.003216
+
+step 293
+norm of lambda is 0.780264
+
+step 294
+norm of lambda is 0.677751
+
+step 295
+norm of lambda is 0.774358
+
+step 296
+norm of lambda is 0.933349
+
+step 297
+norm of lambda is 0.520983
+
+step 298
+norm of lambda is 1.062886
+
+step 299
+norm of lambda is 0.944078
+
+step 300
+norm of lambda is 0.688554
+
+step 301
+norm of lambda is 1.015563
+
+step 301
+Entanglement entropy is 0.695286
+error is 0.422335
+
+step 302
+norm of lambda is 0.765512
+
+step 303
+norm of lambda is 1.008823
+
+step 304
+norm of lambda is 0.721557
+
+step 305
+norm of lambda is 0.860677
+
+step 306
+norm of lambda is 1.013093
+
+step 307
+norm of lambda is 0.619942
+
+step 308
+norm of lambda is 0.814360
+
+step 309
+norm of lambda is 0.694468
+
+step 310
+norm of lambda is 0.929002
+
+step 311
+norm of lambda is 0.959654
+
+step 311
+Entanglement entropy is 1.063527
+error is 0.429407
+
+step 312
+norm of lambda is 0.796576
+
+step 313
+norm of lambda is 0.781075
+
+step 314
+norm of lambda is 0.811381
+
+step 315
+norm of lambda is 0.431449
+
+step 316
+norm of lambda is 0.812854
+
+step 317
+norm of lambda is 0.938987
+
+step 318
+norm of lambda is 0.941887
+
+step 319
+norm of lambda is 0.754336
+
+step 320
+norm of lambda is 0.445531
+
+step 321
+norm of lambda is 1.225981
+
+step 321
+Entanglement entropy is 0.754938
+error is 0.450508
+
+step 322
+norm of lambda is 0.887699
+
+step 323
+norm of lambda is 0.912893
+
+step 324
+norm of lambda is 0.575949
+
+step 325
+norm of lambda is 0.851832
+
+step 326
+norm of lambda is 0.973471
+
+step 327
+norm of lambda is 1.558350
+
+step 328
+norm of lambda is 0.962578
+
+step 329
+norm of lambda is 1.571580
+
+step 330
+norm of lambda is 0.835255
+
+step 331
+norm of lambda is 1.669590
+
+step 331
+Entanglement entropy is -10.039212
+error is 0.505728
+
+step 332
+norm of lambda is 0.719639
+
+step 333
+norm of lambda is 0.770030
+
+step 334
+norm of lambda is 3.385017
+
+step 335
+norm of lambda is 0.621628
+
+step 336
+norm of lambda is 0.917045
+
+step 337
+norm of lambda is 0.799802
+
+step 338
+norm of lambda is 0.803146
+
+step 339
+norm of lambda is 0.869688
+
+step 340
+norm of lambda is 0.761846
+
+step 341
+norm of lambda is 0.838585
+
+step 341
+Entanglement entropy is 0.369307
+error is 0.366164
+
+step 342
+norm of lambda is 0.838837
+
+step 343
+norm of lambda is 1.589538
+
+step 344
+norm of lambda is 0.860442
+
+step 345
+norm of lambda is 0.938657
+
+step 346
+norm of lambda is 0.924622
+
+step 347
+norm of lambda is 0.809439
+
+step 348
+norm of lambda is 0.953218
+
+step 349
+norm of lambda is 0.924472
+
+step 350
+norm of lambda is 0.658258
+
+step 351
+norm of lambda is 5.750466
+
+step 351
+Entanglement entropy is 0.555672
+error is 9.587218
+
+step 352
+norm of lambda is 1.120073
+
+step 353
+norm of lambda is 0.884711
+
+step 354
+norm of lambda is 0.941955
+
+step 355
+norm of lambda is 1.008899
+
+step 356
+norm of lambda is 0.816182
+
+step 357
+norm of lambda is 0.975660
+
+step 358
+norm of lambda is 0.946172
+
+step 359
+norm of lambda is 0.565030
+
+step 360
+norm of lambda is 0.806871
+
+step 361
+norm of lambda is 0.717433
+
+step 361
+Entanglement entropy is 1.114680
+error is 0.415497
+
+step 362
+norm of lambda is 0.873836
+
+step 363
+norm of lambda is 1.006469
+
+step 364
+norm of lambda is 0.818838
+
+step 365
+norm of lambda is 0.570472
+
+step 366
+norm of lambda is 0.936509
+
+step 367
+norm of lambda is 0.966029
+
+step 368
+norm of lambda is 0.914559
+
+step 369
+norm of lambda is 0.806198
+
+step 370
+norm of lambda is 1.505482
+
+step 371
+norm of lambda is 0.900363
+
+step 371
+Entanglement entropy is 0.727457
+error is 0.388457
+
+step 372
+norm of lambda is 0.805802
+
+step 373
+norm of lambda is 1.940139
+
+step 374
+norm of lambda is 0.641616
+
+step 375
+norm of lambda is 0.839653
+
+step 376
+norm of lambda is 0.681285
+
+step 377
+norm of lambda is 0.897167
+
+step 378
+norm of lambda is 0.770124
+
+step 379
+norm of lambda is 1.076898
+
+step 380
+norm of lambda is 0.693839
+
+step 381
+norm of lambda is 0.867580
+
+step 381
+Entanglement entropy is 0.697163
+error is 0.398656
+
+step 382
+norm of lambda is 0.786190
+
+step 383
+norm of lambda is 0.523702
+
+step 384
+norm of lambda is 0.910676
+
+step 385
+norm of lambda is 0.807785
+
+step 386
+norm of lambda is 0.768922
+
+step 387
+norm of lambda is 0.574727
+
+step 388
+norm of lambda is 0.549339
+
+step 389
+norm of lambda is 0.868591
+
+step 390
+norm of lambda is 0.941582
+
+step 391
+norm of lambda is 0.886357
+
+step 391
+Entanglement entropy is 0.708788
+error is 0.066907
+
+step 392
+norm of lambda is 1.683091
+
+step 393
+norm of lambda is 0.999944
+
+step 394
+norm of lambda is 1.010491
+
+step 395
+norm of lambda is 0.964031
+
+step 396
+norm of lambda is 2.720895
+
+step 397
+norm of lambda is 0.671723
+
+step 398
+norm of lambda is 1.187609
+
+step 399
+norm of lambda is 0.811853
+
+step 400
+norm of lambda is 1.119731
+
+step 401
+norm of lambda is 1.320868
+
+step 401
+Entanglement entropy is 1.401860
+error is 0.488959
+
+step 402
+norm of lambda is 0.568972
+
+step 403
+norm of lambda is 0.766445
+
+step 404
+norm of lambda is 0.774650
+
+step 405
+norm of lambda is 0.759534
+
+step 406
+norm of lambda is 0.918225
+
+step 407
+norm of lambda is 0.951985
+
+step 408
+norm of lambda is 0.749154
+
+step 409
+norm of lambda is 0.761930
+
+step 410
+norm of lambda is 0.955812
+
+step 411
+norm of lambda is 0.348203
+
+step 411
+Entanglement entropy is 1.188016
+error is 0.758590
+
+step 412
+norm of lambda is 0.670088
+
+step 413
+norm of lambda is 0.648578
+
+step 414
+norm of lambda is 1.129978
+
+step 415
+norm of lambda is 0.768203
+
+step 416
+norm of lambda is 1.012435
+
+step 417
+norm of lambda is 0.612591
+
+step 418
+norm of lambda is 0.957926
+
+step 419
+norm of lambda is 0.907919
+
+step 420
+norm of lambda is 0.858290
+
+step 421
+norm of lambda is 1.860265
+
+step 421
+Entanglement entropy is 0.682127
+error is 0.862062
+
+step 422
+norm of lambda is 2.238905
+
+step 423
+norm of lambda is 0.691566
+
+step 424
+norm of lambda is 3.298941
+
+step 425
+norm of lambda is 2.531914
+
+step 426
+norm of lambda is 0.560998
+
+step 427
+norm of lambda is 0.965758
+
+step 428
+norm of lambda is 0.966022
+
+step 429
+norm of lambda is 3.705225
+
+step 430
+norm of lambda is 0.828301
+
+step 431
+norm of lambda is 0.557314
+
+step 431
+Entanglement entropy is 0.715303
+error is 0.395014
+
+step 432
+norm of lambda is 0.783385
+
+step 433
+norm of lambda is 1.015627
+
+step 434
+norm of lambda is 0.873765
+
+step 435
+norm of lambda is 0.871864
+
+step 436
+norm of lambda is 0.985416
+
+step 437
+norm of lambda is 0.960505
+
+step 438
+norm of lambda is 0.507683
+
+step 439
+norm of lambda is 0.742922
+
+step 440
+norm of lambda is 0.902595
+
+step 441
+norm of lambda is 0.896463
+
+step 441
+Entanglement entropy is 0.728396
+error is 0.252857
+
+step 442
+norm of lambda is 0.833156
+
+step 443
+norm of lambda is 6.866849
+
+step 444
+norm of lambda is 0.742783
+
+step 445
+norm of lambda is 1.058605
+
+step 446
+norm of lambda is 0.858866
+
+step 447
+norm of lambda is 0.808376
+
+step 448
+norm of lambda is 0.942293
+
+step 449
+norm of lambda is 0.792730
+
+step 450
+norm of lambda is 0.834741
+
+step 451
+norm of lambda is 1.013391
+
+step 451
+Entanglement entropy is 0.794498
+error is 0.610152
+
+step 452
+norm of lambda is 0.977954
+
+step 453
+norm of lambda is 1.165045
+
+step 454
+norm of lambda is 1.022595
+
+step 455
+norm of lambda is 0.577173
+
+step 456
+norm of lambda is 1.326158
+
+step 457
+norm of lambda is 0.665506
+
+step 458
+norm of lambda is 0.985887
+
+step 459
+norm of lambda is 1.108231
+
+step 460
+norm of lambda is 0.900065
+
+step 461
+norm of lambda is 1.030615
+
+step 461
+Entanglement entropy is 0.730859
+error is 0.355281
+
+step 462
+norm of lambda is 0.835101
+
+step 463
+norm of lambda is 0.862279
+
+step 464
+norm of lambda is 1.236448
+
+step 465
+norm of lambda is 0.879441
+
+step 466
+norm of lambda is 1.422016
+
+step 467
+norm of lambda is 0.967683
+
+step 468
+norm of lambda is 0.910585
+
+step 469
+norm of lambda is 3.401873
+
+step 470
+norm of lambda is 0.894351
+
+step 471
+norm of lambda is 13.749701
+
+step 471
+Entanglement entropy is 0.566451
+error is 11.282316
+
+step 472
+norm of lambda is 0.923958
+
+step 473
+norm of lambda is 0.876078
+
+step 474
+norm of lambda is 1.264935
+
+step 475
+norm of lambda is 0.382621
+
+step 476
+norm of lambda is 0.695921
+
+step 477
+norm of lambda is 0.822471
+
+step 478
+norm of lambda is 0.625721
+
+step 479
+norm of lambda is 0.774852
+
+step 480
+norm of lambda is 0.849701
+
+step 481
+norm of lambda is 0.562935
+
+step 481
+Entanglement entropy is 0.350713
+error is 0.818851
+
+step 482
+norm of lambda is 1.282713
+
+step 483
+norm of lambda is 0.894035
+
+step 484
+norm of lambda is 1.598242
+
+step 485
+norm of lambda is 0.710862
+
+step 486
+norm of lambda is 0.963994
+
+step 487
+norm of lambda is 0.788419
+
+step 488
+norm of lambda is 0.511670
+
+step 489
+norm of lambda is 0.818877
+
+step 490
+norm of lambda is 0.797451
+
+step 491
+norm of lambda is 0.538905
+
+step 491
+Entanglement entropy is 0.457788
+error is 0.621744
+
+step 492
+norm of lambda is 0.650213
+
+step 493
+norm of lambda is 1.275669
+
+step 494
+norm of lambda is 0.908241
+
+step 495
+norm of lambda is 1.760526
+
+step 496
+norm of lambda is 1.422071
+
+step 497
+norm of lambda is 0.498987
+
+step 498
+norm of lambda is 1.198274
+
+step 499
+norm of lambda is 0.882480
+
+step 500
+norm of lambda is 0.745939
+
