@@ -60,8 +60,21 @@ std::tuple<ITensor,ITensor> decompV(const ITensor& V){
     Index l = V.index(1);//Rr1
     Index r = V.index(2);//Rr2
     //int dim = l.dim();
-    auto [eigvec,eigval] = eigen(V*delta(r,prime(l)),{"ErrGoal=",1E-14});
-	//PrintData(eigval); PrintData(eigvec);
+    double Vval = V.eltC(l=1,r=2).real();
+    printf("Vval is %.18f\n", Vval);
+    ITensor Vd = V;
+    Vd *= delta(r,prime(l));
+    //printf("\nmatrix to be decomposed is\n");
+    //PrintData(Vd);
+    auto [eigvec,eigval] = eigen(Vd);
+    Index d1 = eigval.index(1);
+    Index d2 = eigval.index(2);
+    double val1 = eigval.eltC(d1=1, d2=1).real();
+    double val2 = eigval.eltC(d1=2, d2=2).real();
+    printf("val1 is %.18f\n",val1);
+    printf("val2 is %.18f\n",val2);
+    //auto [eigvec,eigval] = diagHermitian(V*delta(r,prime(l)),{"ErrGoal=",1E-14});
+	//PrintData(eigval); //PrintData(eigvec);
     //Link indices
     Index v2 = eigval.index(1);// primed Link
     Index v1 = eigval.index(2);// Link // commonIndex(U,D);
@@ -157,6 +170,19 @@ ITensor getFibonacciTensor(){
     return C;
 }
 
+//find the location of max element of diagonal tensor
+int findMax(const ITensor& T){
+    Index T1 = T.index(1);
+    Index T2 = T.index(2);
+    std::vector<double> vec = {};
+    for (auto i : range1(T1.dim())){
+        Cplx val_i = T.eltC(T1=i,T2=i);
+        vec.push_back(std::abs(val_i));
+    }
+    auto max_pt = std::max_element(vec.begin(),vec.end());
+    auto max_loc = std::distance(vec.begin(),max_pt);
+    return (max_loc + 1);//ITensor index is 1-based
+}
 
 // one site invariant iMPS
 class iMPS{
@@ -210,9 +236,9 @@ void getR(){
     Rr2 = Index(bond_dim,"Rr2");
     // upper part has indices Rl1, Gd, Rl2
 	//Print(Gamma); Print(lambda);
-    ITensor upper_part = delta(Rl1,Gl) * Gamma * delta(Gr,ll) * lambda * delta(lr,Rr1);
+    ITensor upper_part = ((delta(Rl1,Gl) * Gamma * delta(Gr,ll)) * lambda) * delta(lr,Rr1);
     // lower part has indices Rl2, Gd, Rr2
-    ITensor lower_part = delta(Rl2,Gl) * conj(Gamma) * delta(Gr,ll) * conj(lambda) * delta(lr,Rr2);
+    ITensor lower_part = ((delta(Rl2,Gl) * conj(Gamma) * delta(Gr,ll)) * conj(lambda)) * delta(lr,Rr2);
     //PrintData(upper_part);PrintData(lower_part);
     R = upper_part * lower_part;
 	//PrintData(R);
@@ -223,9 +249,9 @@ void getL(){
     Lr1 = Index(bond_dim,"Lr1");
     Lr2 = Index(bond_dim,"Lr2");
     // uper part has indices Ll1, Gd, Lr1
-    ITensor upper_part = delta(Ll1,ll) * lambda * delta(lr,Gl) * Gamma * delta(Gr,Lr1);
+    ITensor upper_part = delta(Ll1,ll) * (lambda * (delta(lr,Gl) * Gamma * delta(Gr,Lr1)));
     // lower part has indices Ll2, Gd, Lr2
-    ITensor lower_part = delta(Ll2,ll) * conj(lambda) * delta(lr,Gl) * conj(Gamma) * delta(Gr,Lr2);
+    ITensor lower_part = delta(Ll2,ll) * (conj(lambda) * (delta(lr,Gl) * conj(Gamma) * delta(Gr,Lr2)));
     L = upper_part * lower_part;
 	//PrintData(L);
 }
@@ -242,17 +268,20 @@ double calcEntropy(){
 }
 
 void canonicalize(){
-	//printf("\n\n\n\n\n starting canonicalization\n");
+	printf("\n\n\n\n\n starting canonicalization\n");
     this -> getR();
     this -> getL();
     //PrintData(R);
     ITensor R_copy = R;
+    double valRR = R.eltC(Rl1=2,Rl2=1,Rr1=1,Rr2=1).real();
+    printf("valRR is %.18f\n",valRR);
     //PrintData(R); PrintData(L);
     R *= delta(Rl1,prime(Rr1));
     R *= delta(Rl2,prime(Rr2));
     auto RM = ITensorMap(R);
     auto VR = randomITensor(Rr1,Rr2);//store the eigenvector
-    auto etaR = arnoldi(RM,VR,{"ErrGoal=",1E-14});
+    auto etaR = arnoldi(RM,VR,{"ErrGoal=",1E-20,"MaxIter=",1000,"MaxRestart=",0,"DebugLevel=",2});
+    //auto [VR_new, etaR_new] = eigen(VR);
     // use transpoes(R) to get the left eigenvalue of L
     #define USE_R_TRANSPOSE 1
     #if USE_R_TRANSPOSE
@@ -261,7 +290,7 @@ void canonicalize(){
         TR *= delta(Rr2,prime(Rl2));//now TR has indices Rl1,2 and primed Rl1,2
         auto RM_T = ITensorMap(TR);
         auto VL = randomITensor(Rl1,Rl2);
-        auto etaL = arnoldi(RM_T,VL,{"ErrGoal=",1E-14});
+        auto etaL = arnoldi(RM_T,VL,{"ErrGoal=",1E-20,"MaxIter=",1000,"MaxRestart=",0,"DebugLevel=",2});
     #else
         L *= delta(Lr1,prime(Ll1));
         L *= delta(Lr2,prime(Ll2));
@@ -275,7 +304,11 @@ void canonicalize(){
     //a transfer matrix is made up of two copies of Gamma and lambda
     Gamma /= std::sqrt(etaR);
     //lambda /= std::sqrt(etaR);
-    //PrintData(etaR); PrintData(etaL); PrintData(VR);PrintData(VL);
+    PrintData(etaR); PrintData(etaL); PrintData(VR);PrintData(VL);
+    double valR = etaR.real();
+    double valL = etaL.real();
+    printf("valR is %.18f\n",valR);
+    printf("valL is %.18f\n",valL);
     // normalization of eigenvector is already implemented by the eigen decomposition
     Cplx trR = eltC(VR*VR);
     Cplx trL = eltC(VL*VL);
@@ -294,8 +327,8 @@ void canonicalize(){
     trLR = std::abs(trLR);
     VR /= std::sqrt(trLR);
     VL /= std::sqrt(trLR);
-    //printf("normalized eigenvectors\n");
-	//PrintData(VR); PrintData(VL);
+    printf("\nnormalized eigenvectors\n");
+	PrintData(VR); PrintData(VL);
     // eigenvalue decomposition of VR
 	//Print(VR);
     //printf("starting X decomp\n");
@@ -387,7 +420,7 @@ void canonicalize(){
 // the indices of A are ordered as Al, Au, Ar, Ad
 // suppose dim(Au) = dim(Ad) = phys_dim, and dim(Al) = dim(Ar)
 void step(const ITensor& A){
-	//printf("\nstarting step\n");
+	printf("\nstarting step\n");
     Index Al = A.index(1);
     Index Au = A.index(2);
     Index Ar = A.index(3);
@@ -409,7 +442,8 @@ void step(const ITensor& A){
     Gl = Glc;
     Gr = Grc;
     Gd = Ad;
-	//PrintData(Gamma);
+    printf("gamma after contracting MPO is\n");
+	PrintData(Gamma);
 	//
 	//ITensor lambda_new = lambda * delta(Ar,Al);
 	//a stupid way to make a dense identity tensor, because ITensor
@@ -486,7 +520,7 @@ void setValue(iMPS& m){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 int main(){
-    int D = 5;//bond dimension
+    int D = 2;//bond dimension
     int max_iter_steps = 500;
     int check_err_interval = 10;
     double err_threshold = 1E-5;
@@ -494,10 +528,13 @@ int main(){
 	//ITensor A = getIsingTensor();
     int phys_dim = 3;
     ITensor A = getFibonacciTensor();
-    iMPS m(D,phys_dim);
-    //setValue(m);
-    m.canonicalize();
-    printf("norm of lambda is %f\n\n", norm(m.lambda));
+    iMPS mps(D,phys_dim);
+    setValue(mps);
+   PrintData(mps.lambda); PrintData(mps.Gamma);
+    mps.canonicalize();
+     PrintData(mps.lambda); PrintData(mps.Gamma);
+     printf("===================================================\n\n");
+    mps.step(A);
     //m.canonicalize();
     //PrintData(m.lambda); PrintData(m.Gamma);
     //for (auto i : range1(100)){
@@ -509,7 +546,7 @@ int main(){
     //PrintData(m.lambda);
     //PrintData(m.lambda);
     //PrintData(m.lambda);
-    #if 1
+    #if 0
 	for (auto i : range1(max_iter_steps)){
         //printf("step %d\n",i);
     	m.step(A);
