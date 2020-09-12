@@ -19,7 +19,7 @@
 //#include <random>
 
 using namespace itensor;
-using namespace std;
+using namespace std;    
 using namespace std::chrono;
 //using namespace arma;
 
@@ -143,6 +143,20 @@ void chop3(ITensor& T, double threshold = chop_threshold){
         }
 }
 
+void chop4(ITensor& T, double threshold = chop_threshold){
+    Index T1 = T.index(1);
+    Index T2 = T.index(2);
+    Index T3 = T.index(3);
+    Index T4 = T.index(4);
+    for(auto i : range1(T1.dim()))
+        for(auto j : range1(T2.dim()))
+            for(auto k : range1(T3.dim()))
+                for(auto l : range1(T4.dim())){
+                    Cplx val = T.eltC(T1=i,T2=j,T3=k,T4=l);
+                    if(std::abs(val)<threshold) T.set(T1=i,T2=j,T3=k,T4=l,0);
+        }
+}
+
 // get the sqrt of a diagonal matrix
 ITensor sqrtDiag(const ITensor& T, bool keep_index){
     Index T1 = T.index(1);
@@ -229,6 +243,9 @@ void printFull4(const ITensor& T){
                     printf("T(%d,%d,%d,%d) = %e\n", i,j,k,l,T.eltC(T1=i,T2=j,T3=k,T4=l));
 }
 
+//todo: decompV2 that returns a non-square X and X_inv
+// with small eigenvalues truncated
+
 //eigenvalue decomposition of a diagonal matrix V
 // return X and X_inverse_dagger
 std::tuple<ITensor,ITensor> decompV(ITensor& V){
@@ -245,7 +262,7 @@ std::tuple<ITensor,ITensor> decompV(ITensor& V){
     if (showInfo) {PrintData(eigval);PrintData(eigvec);}
     //auto [eigvec,eigval] = diagHermitian(V*delta(r,prime(l)),{"ErrGoal=",1E-14});
 	//PrintData(eigval); //PrintData(eigvec);
-    chop2(eigvec);
+    //chop2(eigvec);
     //chop2(eigval);
     //Link indices
     Index v2 = eigval.index(1);// primed Link
@@ -265,6 +282,7 @@ std::tuple<ITensor,ITensor> decompV(ITensor& V){
             if (showInfo) printf("truncating %e to 0\n",x);
             x = 0;
         }
+        //x = 1/std::sqrt(x);
     };
     auto sqrt_vec = vec;
     for_each(sqrt_vec.begin(), sqrt_vec.end(), sqrt_each);
@@ -284,7 +302,7 @@ std::tuple<ITensor,ITensor> decompV(ITensor& V){
     ITensor sqrt_inv_eigval = diagITensor(sqrt_inv_vec,v1,v2);
     //Print(sqrt_inv_eigval);
     ITensor X = eigvec * sqrt_eigval;//X has index l and v2
-    ITensor X_inv_dag = conj(eigvec * sqrt_inv_eigval);//X_inv_dag has index l and v2
+    ITensor X_inv_dag = conj(eigvec) * sqrt_inv_eigval;//X_inv_dag has index l and v2
     X_inv_dag *= delta(l,r);//X_inv_dag now has index r and v2
     //chop2(X);chop2(X_inv_dag);
     return {X,X_inv_dag};
@@ -356,7 +374,7 @@ iMPS(int bd, int pd, bool use_setValue=false){
         for (auto i : range1(bond_dim)){
             for (auto j : range1(phys_dim)){
                 for (auto k : range1(bond_dim)){
-                    Gamma.set(Gl=i,Gd=j,Gr=k, 0.3+0.5*i+0.7*j-0.9*k);
+                    Gamma.set(Gl=i,Gd=j,Gr=k, -0.3+0.5*i+0.7*j-0.9*k);
                 }
             }
         }
@@ -408,7 +426,7 @@ void getR(){
     Rl2 = Index(bond_dim,"Rl2");
     Rr1 = Index(bond_dim,"Rr1");
     Rr2 = Index(bond_dim,"Rr2");
-    R = (delta(Rl1,Glam_l) * Glam * delta(Glam_r,Rr1)) * (delta(Rl2,Glam_l) * Glam * delta(Glam_r,Rr2));
+    R = (delta(Rl1,Glam_l) * Glam * delta(Glam_r,Rr1)) * (delta(Rl2,Glam_l) * conj(Glam) * delta(Glam_r,Rr2));
 }
 
 //canonicalize Glam to obtain new Gamma and lambda
@@ -416,7 +434,8 @@ void getR(){
 void canonicalizeBase(){
     if(showInfo) printf("begin conanicalization base\n");
     this -> getR();
-    ITensor L = R;//make a copy of R
+    chop4(R);
+    ITensor L = conj(R);//make a copy of R
     // obtain VR and VL
     if(showInfo) Print(R);
     R *= delta(Rl1,prime(Rr1));
@@ -440,8 +459,8 @@ void canonicalizeBase(){
     //chop2(VR);chop2(VL);
     if(showInfo) {
         //PrintData(etaL);
-        printf("etaL = %e\n",etaL);
-        //PrintData(VL);
+        printf("\netaL = %e\n",etaL);
+        PrintData(VL);
     }
     // normalization
     if(showInfo) printf("normalization\n");
@@ -452,7 +471,7 @@ void canonicalizeBase(){
     Cplx phaseL = trL / std::abs(trL);
     VR /= phaseR;
     VL /= phaseL;
-    Cplx trLR = eltC(VR*VL*delta(Rr1,Rl1)*delta(Rr2,Rl2));
+    Cplx trLR = eltC(conj(VR)*VL*delta(Rr1,Rl1)*delta(Rr2,Rl2));
     trLR = std::abs(trLR);
     if(showInfo) printf("\ntrLR = %e\n",trLR);
     VR /= std::sqrt(trLR);
@@ -464,6 +483,7 @@ void canonicalizeBase(){
         //PrintData(VL);
     }
     // obtain X and X_inv
+    chop2(VR); chop2(VL);
     if(showInfo) printf("\nobtain X and X_inv\n");
     auto [X,X_inv] = decompV(VR);
     Index X_l(bond_dim);
@@ -487,7 +507,7 @@ void canonicalizeBase(){
         //PrintData(Y_inv);
     };
     //if(showInfo) {PrintData(Y * delta(Y_r,X_l) * X);}
-    auto [U,lambda_new,V] = svd(Y * delta(Y_r,X_l) * X, {Y_c},{"MaxDim=",trunc_dim,"MinDim=",trunc_dim});
+    auto [U,lambda_new,V] = svd(conj(Y) * delta(Y_r,X_l) * X, {Y_c},{"MaxDim=",trunc_dim,"MinDim=",trunc_dim});
     //
     //chop2(U);chop2(V);
     //
@@ -497,7 +517,7 @@ void canonicalizeBase(){
     bond_dim = trunc_dim;
     // get new Gamma
     //if(showInfo) PrintData(Glam);
-    ITensor Gamma_new = V * X_inv * delta(X_inv_r,Glam_l) * Glam * delta(Glam_r,Y_inv_l) * Y_inv * U;
+    ITensor Gamma_new = conj(V) * X_inv * delta(X_inv_r,Glam_l) * Glam * delta(Glam_r,Y_inv_l) * conj(Y_inv) * U;
     //if(showInfo) PrintData(Gamma_new);
     // restore indices of Gamma and lambda
     Gl = Index(bond_dim,"Gl");
@@ -563,11 +583,13 @@ int main(int argc, char* argv[]){
     showInfo = false;
     int D = 5;
     int phys_dim = 3;
-    ITensor H = getFibonacciTensor();
+    ITensor H = getFibonacciTensor2();
     iMPS mps(D,phys_dim,true);
     if(showInfo) {PrintData(mps.lambda);PrintData(mps.Gamma);}
     mps.canonicalize();
     printFullDiag(mps.lambda);
+    //mps.canonicalize();
+    //printFullDiag(mps.lambda);
     //mps.canonicalize();
     //PrintData(mps.lambda);PrintData(mps.Gamma);
     #if 1
