@@ -63,7 +63,7 @@ void printFullDiag(const ITensor& T){
     Index T1 = T.index(1);
     Index T2 = T.index(2);
     for(auto i : range1(T1.dim())){
-        printf("T(%d,%d) = %.10e\n", i,i,T.eltC(T1=i,T2=i));
+        printf("T(%d,%d) = %.18e\n", i,i,T.eltC(T1=i,T2=i));
     }
 }
 
@@ -77,7 +77,7 @@ void printFull4(const ITensor& T){
         for(auto j : range1(T2.dim()))
             for(auto k : range1(T3.dim()))
                 for(auto l : range1(T4.dim()))
-                    printf("T(%d,%d,%d,%d) = %e;  ", i,j,k,l,T.eltC(T1=i,T2=j,T3=k,T4=l));
+                    printf("T(%d,%d,%d,%d) = %.18e;  ", i,j,k,l,T.eltC(T1=i,T2=j,T3=k,T4=l));
 }
 
 // create random diagonal tensor
@@ -147,7 +147,7 @@ std::tuple<ITensor,ITensor> decompV(ITensor& V){
         if(showInfo) printf("%e\n",val);
         vec.push_back(val);
     }
-    //for(auto i : vec) printf("%.10e\n",i);
+    for(auto i : vec) printf("%.16e\n",i);
     //
     auto sqrt_each = [](Cplx& x){ x = std::sqrt(x); };
     auto sqrt_inv_each = [=](Cplx& x){
@@ -290,7 +290,7 @@ void canonicalizeBase(){
     if(showInfo) printf("begin conanicalization base\n");
     this -> getR();
     //chop4(R);
-    //printFull4(R);
+    printFull4(R);
     ITensor L = conj(R);//make a copy of R
     // obtain VR and VL
     if(showInfo) Print(R);
@@ -317,6 +317,7 @@ void canonicalizeBase(){
     VR /= std::sqrt(trLR);
     VL /= std::sqrt(trLR);
    
+    printf("\n\n");
     if(showInfo) printf("\nobtain X and X_inv\n");
     auto [X,X_inv] = decompV(VR);
     Index X_l(bond_dim);
@@ -409,13 +410,14 @@ int main(int argc, char* argv[]){
         iter_steps = atoi(argv[1]);
     }
     showInfo = false;
-    int D = 8;
+    int D = 2;
     int phys_dim = 3;
     ITensor H = getFibonacciTensor();
-    iMPS mps(D,phys_dim,false);
+    iMPS mps(D,phys_dim,true);
     if(showInfo) {PrintData(mps.lambda);PrintData(mps.Gamma);}
     mps.canonicalize();
     printFullDiag(mps.lambda);
+    //Tensor x;
     //mps.canonicalize();
     //printFullDiag(mps.lambda);
     //mps.canonicalize();
@@ -425,7 +427,8 @@ int main(int argc, char* argv[]){
         printf("\n\n\n================================================\n");
         printf("step %d\n",i);
         //mps.step(H);
-        mps.step(H);
+        //mps.step(H);
+        mps.canonicalize();
         printFullDiag(mps.lambda);
         //double vall = mps.lambda.eltC(mps.ll=1,mps.lr=1).real();
         //double valr = mps.lambda.eltC(mps.ll=2,mps.lr=2).real();

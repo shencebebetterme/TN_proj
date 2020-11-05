@@ -22,7 +22,7 @@ GOBJECTS=$(patsubst %,.debug_objs/%, $(OBJECTS))
 #Rules ------------------
 
 %.o: %.cc $(HEADERS) $(TENSOR_HEADERS)
-	$(CCCOM) -c $(CCFLAGS) -o $@ $< -I /data/scbebetterme/GitRepo/C++/armadillo-code/include -DARMA_DONT_USE_WRAPPER
+	$(CCCOM) -c $(CCFLAGS) -o $@ $< -I /data/scbebetterme/GitRepo/C++/armadillo-code/include -DARMA_DONT_USE_WRAPPER -larpack
 
 .debug_objs/%.o: %.cc $(HEADERS) $(TENSOR_HEADERS)
 	$(CCCOM) -c $(CCGFLAGS) -o $@ $<
@@ -33,7 +33,7 @@ build: $(APP)
 debug: $(APP)-g
 
 $(APP): $(OBJECTS) $(ITENSOR_LIBS)
-	$(CCCOM) $(CCFLAGS) $(OBJECTS) -o $(APP).out $(LIBFLAGS) -I /data/scbebetterme/GitRepo/C++/armadillo-code/include -DARMA_DONT_USE_WRAPPER
+	$(CCCOM) $(CCFLAGS) $(OBJECTS) -o $(APP).out $(LIBFLAGS) -I /data/scbebetterme/GitRepo/C++/armadillo-code/include -DARMA_DONT_USE_WRAPPER -larpack
 
 $(APP)-g: mkdebugdir $(GOBJECTS) $(ITENSOR_GLIBS)
 	$(CCCOM) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)

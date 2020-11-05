@@ -10,7 +10,7 @@ int len_chain_R = 3;
 //int period = len_chain + 1;
 int num_states = 20;// final number of dots in the momentum diagram
 int svd_maxdim = 6;
-// convention can be "maintext" or "appendix" or "ruoshui"
+// convention can be "maintext" or "appendix" or "ruoshui" or "mine"
 //std::string convention = "maintext";
 std::string convention = "ruoshui";
 
@@ -31,6 +31,8 @@ int main(int argc, char* argv[]){
         len_chain_L = (len_chain-1)/2;
         len_chain_R = len_chain - len_chain_L;
     }
+
+
     //
     // build A tensor
     Index alpha1(dim0);
@@ -55,10 +57,12 @@ int main(int argc, char* argv[]){
                                 if ((alpha==2)&&(beta==2)&&(gamma==2)){
                                     if (convention=="ruoshui") {val = -std::pow(phi,-1.0/4);}
                                     if (convention=="maintext") {val = -std::pow(phi,-1.0/2);}
+                                    if (convention=="mine") {val = -std::pow(phi,1/4);}
                                 }
                                 if (oneIs1(alpha,beta,gamma)){
                                     if (convention=="ruoshui") {val = std::pow(phi,7.0/12);}
                                     if (convention=="maintext") {val = std::pow(phi,1.0/2);}
+                                    if (convention=="mine") {val = std::pow(phi,-1/4);}
                                 }
                                 A.set(alpha1=sa1,alpha2=sa2,beta1=sb1,beta2=sb2,gamma1=sg1,gamma2=sg2,val);
                             }
@@ -104,10 +108,12 @@ int main(int argc, char* argv[]){
                                  if ((mu==2)&&(rho==2)&&(nu==2)){
                                     if (convention=="ruoshui") {val = -std::pow(phi,-1.0/4);}
                                     if (convention=="maintext") {val = -std::pow(phi,-1.0/2);}
+                                    if (convention=="mine") {val = -std::pow(phi,1/4);}
                                 }
                                 else if (oneIs1(mu,rho,nu)){
                                     if (convention=="ruoshui") {val = std::pow(phi,7.0/12);}
                                     if (convention=="maintext") {val = std::pow(phi,1.0/2);}
+                                    if (convention=="mine") {val = std::pow(phi,-1/4);}
                                 }
                                 B.set(mu1=sm1,mu2=sm2,rho1=sr1,rho2=sr2,nu1=sn1,nu2=sn2,val);
                             }
@@ -139,6 +145,7 @@ int main(int argc, char* argv[]){
     Index r = commonIndex(Fr,Fl);
     Index l = replaceTags(r,"right","left");
     Fl *= delta(r,l);//now Fr has svd index r, and Fl has svd index l
+
 
     Index u(new_dim0,"up");
     Index a1(new_dim0);
