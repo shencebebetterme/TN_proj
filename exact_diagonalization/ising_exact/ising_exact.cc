@@ -17,6 +17,8 @@
 //#include <ctime>
 #include <chrono>
 #include <tuple>
+#include <omp.h>
+#include <thread>
 //#include <random>
 
 
@@ -41,6 +43,7 @@ int num_states = 20;// final number of dots in the momentum diagram
 arma::mat extract_mat(const ITensor& T);
 
 void extract_cft_data(const arma::sp_mat& TM);
+arma::sp_mat extract_sparse_mat_par(const ITensor&);
 
 
 int main(int argc, char* argv[]){
@@ -174,9 +177,10 @@ int main(int argc, char* argv[]){
     ITensor& TMmat = TM;
     //Index Mi = M.index(1);
     //Index Mj = M.index(2);
-    auto TM_dense = extract_mat(TMmat);
+    //auto TM_dense = extract_mat(TMmat);
     //obtain the first k eigenvalues from a sparse matrix
-    arma::sp_mat TM_sparse(TM_dense);
+    //arma::sp_mat TM_sparse(TM_dense);
+    arma::sp_mat TM_sparse = extract_sparse_mat_par(TMmat);
     extract_cft_data(TM_sparse);
 
     return 0;
@@ -258,3 +262,27 @@ arma::mat extract_mat(const ITensor& T){
     return Tmat;
 }
 
+
+ // M is extremely sparse, so choose a different strategy
+arma::sp_mat extract_sparse_mat_par(const ITensor& T){
+    // here T is sparse matrix ITensor
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    arma::sp_mat Tmat(di,dj);
+    double val = 0;
+    //  
+    unsigned int n = std::thread::hardware_concurrency();
+    omp_set_num_threads(n);
+#pragma omp parallel for  
+    for (int i=1; i<=di; i++){
+        for (int j=1; j<=dj; j++){
+            val = eltC(T, Ti=i, Tj=j).real();
+            if (val != 0){
+                Tmat(i-1,j-1) = val;
+            }
+        }
+    }
+    return Tmat;
+}
