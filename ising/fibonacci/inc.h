@@ -2,7 +2,7 @@
 // make && ./ising_arma
 #include "itensor/all.h"
 #include "itensor/util/print_macro.h"
-//#include "omp.h"
+#include "omp.h"
 #include <armadillo>
 
 #include <cmath>
@@ -153,7 +153,7 @@ arma::sp_mat extract_sparse_mat(const ITensor& T, bool twisted=false){
     auto di = Ti.dim();
     auto dj = Tj.dim();
     arma::sp_mat Tmat(di,dj);
-    //
+    //  
     for (auto it : iterInds(T)){
         double val = T.real(it);
         if (val != 0){
@@ -168,6 +168,31 @@ arma::sp_mat extract_sparse_mat(const ITensor& T, bool twisted=false){
                 Tmat(i,twisted_j) = val;
             }
             else Tmat(i,j) = val;
+        }
+    }
+    return Tmat;
+}
+
+
+
+ // M is extremely sparse, so choose a different strategy
+arma::sp_mat extract_sparse_mat_par(const ITensor& T, bool twisted=false){
+    // here T is sparse matrix ITensor
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    arma::sp_mat Tmat(di,dj);
+    double val = 0;
+    //  
+    omp_set_num_threads(12);
+#pragma omp parallel for  
+    for (int i=1; i<=di; i++){
+        for (int j=1; j<=dj; j++){
+            val = eltC(T, Ti=i, Tj=j).real();
+            if (val != 0){
+                Tmat(i-1,j-1) = val;
+            }
         }
     }
     return Tmat;

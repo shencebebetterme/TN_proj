@@ -240,6 +240,6 @@ int main(int argc, char* argv[]){
     // now TM becomes a matrix
     ITensor& TMmat = TM;
     Print(TMmat);
-    arma::sp_mat TM_sparse = extract_sparse_mat(TMmat,false);
+    arma::sp_mat TM_sparse = extract_sparse_mat_par(TMmat,false);
     extract_cft_data(TM_sparse);
 }
