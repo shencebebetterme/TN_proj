@@ -18,6 +18,7 @@
 //#include <ctime>
 #include <chrono>
 #include <tuple>
+#include <thread>
 //#include <random>
 
 
@@ -185,7 +186,8 @@ arma::sp_mat extract_sparse_mat_par(const ITensor& T, bool twisted=false){
     arma::sp_mat Tmat(di,dj);
     double val = 0;
     //  
-    omp_set_num_threads(12);
+    unsigned int n = std::thread::hardware_concurrency();
+    omp_set_num_threads(n);
 #pragma omp parallel for  
     for (int i=1; i<=di; i++){
         for (int j=1; j<=dj; j++){
