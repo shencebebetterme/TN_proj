@@ -37,6 +37,11 @@ int len_chain_R = 3;
 //int period = len_chain + 1;
 int num_states = 20;// final number of dots in the momentum diagram
 
+//threads
+int max_num_threads = 30;
+unsigned int n = std::thread::hardware_concurrency();
+int num_threads = (n>max_num_threads ? max_num_threads : n);
+
 
 
 // convert ITensor matrix to arma matrix
@@ -273,8 +278,8 @@ arma::sp_mat extract_sparse_mat_par(const ITensor& T){
     arma::sp_mat Tmat(di,dj);
     double val = 0;
     //  
-    unsigned int n = std::thread::hardware_concurrency();
-    omp_set_num_threads(n);
+    
+    omp_set_num_threads(num_threads);
 #pragma omp parallel for  
     for (int i=1; i<=di; i++){
         for (int j=1; j<=dj; j++){
