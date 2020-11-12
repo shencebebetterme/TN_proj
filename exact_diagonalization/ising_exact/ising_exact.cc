@@ -20,6 +20,8 @@
 #include <omp.h>
 #include <thread>
 //#include <random>
+#include <execution>
+#include <numeric>
 
 
 #define PI 3.1415926535
@@ -35,7 +37,7 @@ int len_chain = 6; // the actual length is len_chain + 1
 int len_chain_L = 3;
 int len_chain_R = 3;
 //int period = len_chain + 1;
-int num_states = 20;// final number of dots in the momentum diagram
+int num_states = 10;// final number of dots in the momentum diagram
 
 //threads
 int max_num_threads = 30;
@@ -46,6 +48,7 @@ int num_threads = (n>max_num_threads ? max_num_threads : n);
 
 // convert ITensor matrix to arma matrix
 arma::mat extract_mat(const ITensor& T);
+arma::sp_mat extract_sparse_mat(const ITensor& T);
 
 void extract_cft_data(const arma::sp_mat& TM);
 arma::sp_mat extract_sparse_mat_par(const ITensor&);
@@ -78,9 +81,9 @@ int main(int argc, char* argv[]){
     ITensor A = ITensor(u,r,d,l);
 
     // Fill the A tensor with correct Boltzmann weights:
-	auto Sig = [](int s) { return 1. - 2. * (s - 1); };
     // 1 -> 1
     // 2-> -1
+	auto Sig = [](int s) { return 1. - 2. * (s - 1); };
 	for (auto sl : range1(dim0))
 		for (auto sd : range1(dim0))
 			for (auto sr : range1(dim0))
@@ -185,6 +188,7 @@ int main(int argc, char* argv[]){
     //auto TM_dense = extract_mat(TMmat);
     //obtain the first k eigenvalues from a sparse matrix
     //arma::sp_mat TM_sparse(TM_dense);
+    printf("\nextracting matrix to armadillo matrix\n\n");
     arma::sp_mat TM_sparse = extract_sparse_mat_par(TMmat);
     extract_cft_data(TM_sparse);
 
@@ -268,6 +272,30 @@ arma::mat extract_mat(const ITensor& T){
 }
 
 
+arma::sp_mat extract_sparse_mat(const ITensor& T){
+    // here T is sparse matrix ITensor
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    arma::sp_mat Tmat(di,dj);
+    double val = 0;
+    //   
+    for (int i=1; i<=di; i++){
+        for (int j=1; j<=dj; j++){
+            val = eltC(T, Ti=i, Tj=j).real();
+            if (val != 0){
+                Tmat(i-1,j-1) = val;
+            }
+        }
+    }
+    return Tmat;
+}
+
+
+// this openmp implementation of parallel data transfer results in 
+// unexpected behaviour
+#if 0
  // M is extremely sparse, so choose a different strategy
 arma::sp_mat extract_sparse_mat_par(const ITensor& T){
     // here T is sparse matrix ITensor
@@ -289,5 +317,45 @@ arma::sp_mat extract_sparse_mat_par(const ITensor& T){
             }
         }
     }
+    return Tmat;
+}
+#endif
+
+
+// not using multi threading, data race in T?
+// then try to generate n armadillo sparse rows in parallel
+// then construct an armadillo sparse matrix from these rows??
+void transferIthRow(const ITensor& T, arma::sp_mat& Tmat, int i){
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    double val = 0;
+    
+    for (int j=1; j<=dj; j++){
+        val = eltC(T, Ti=i, Tj=j).real();
+        if (val != 0){
+            Tmat(i-1,j-1) = val;
+        }
+    }
+}
+
+arma::sp_mat extract_sparse_mat_par(const ITensor& T){
+    // here T is sparse matrix ITensor
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    arma::sp_mat Tmat(di,dj);
+    //   
+    std::vector<int> mat_row(di);
+    std::iota (mat_row.begin(), mat_row.end(), 1);
+
+    auto lambda = [&](int n){
+        transferIthRow(T, Tmat, n);
+    };
+
+    std::for_each(std::execution::par_unseq, mat_row.begin(), mat_row.end(), lambda);
+
     return Tmat;
 }

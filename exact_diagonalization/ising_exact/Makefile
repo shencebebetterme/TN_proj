@@ -1,7 +1,12 @@
+
+### uncomment the following two lines on server
 #LIBRARY_DIR=/data/sc/GitRepo/ITensor
 #ARMA_DIR=/data/sc/GitRepo/C++/armadillo-code/include
+
+### uncomment the following two lines on wsl
 LIBRARY_DIR=/home/ce18/ITensor
 ARMA_DIR=/home/ce18/armadillo-code/include
+
 
 APP=ising_exact
 
@@ -42,7 +47,7 @@ $(APP)-g: mkdebugdir $(GOBJECTS) $(ITENSOR_GLIBS)
 	$(CCCOM) $(CCGFLAGS) $(GOBJECTS) -o $(APP)-g $(LIBGFLAGS)
 
 clean:
-	rm -fr .debug_objs *.o $(APP) $(APP)-g
+	rm -fr .debug_objs *.o $(APP).out $(APP)-g
 
 mkdebugdir:
 	mkdir -p .debug_objs
