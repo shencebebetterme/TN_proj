@@ -15,6 +15,7 @@
 #include <tuple>
 #include <omp.h>
 #include <thread>
+#include <mutex>
 //#include <random>
 #include <execution>
 #include <numeric>
@@ -92,36 +93,34 @@ arma::sp_mat extract_sparse_mat(const ITensor& T){
 
 // this openmp implementation of parallel data transfer results in 
 // unexpected behaviour
-#if 0
- // M is extremely sparse, so choose a different strategy
-arma::sp_mat extract_sparse_mat_par(const ITensor& T){
-    // here T is sparse matrix ITensor
-    Index Ti = T.index(1);
-    Index Tj = T.index(2);
-    auto di = Ti.dim();
-    auto dj = Tj.dim();
-    arma::sp_mat Tmat(di,dj);
-    double val = 0;
-    //  
+
+//  // M is extremely sparse, so choose a different strategy
+// arma::sp_mat extract_sparse_mat_par(const ITensor& T){
+//     // here T is sparse matrix ITensor
+//     Index Ti = T.index(1);
+//     Index Tj = T.index(2);
+//     auto di = Ti.dim();
+//     auto dj = Tj.dim();
+//     arma::sp_mat Tmat(di,dj);
+//     double val = 0;
+//     //  
     
-    omp_set_num_threads(num_threads);
-#pragma omp parallel for  
-    for (int i=1; i<=di; i++){
-        for (int j=1; j<=dj; j++){
-            val = eltC(T, Ti=i, Tj=j).real();
-            if (val != 0){
-                Tmat(i-1,j-1) = val;
-            }
-        }
-    }
-    return Tmat;
-}
-#endif
+//     omp_set_num_threads(num_threads);
+// #pragma omp parallel for  
+//     for (int i=1; i<=di; i++){
+//         for (int j=1; j<=dj; j++){
+//             val = eltC(T, Ti=i, Tj=j).real();
+//             if (val != 0){
+//                 Tmat(i-1,j-1) = val;
+//             }
+//         }
+//     }
+//     return Tmat;
+// }
+
 
 
 // not using multi threading, data race in T?
-// then try to generate n armadillo sparse rows in parallel
-// then construct an armadillo sparse matrix from these rows??
 void transferIthRow(const ITensor& T, arma::sp_mat& Tmat, int i){
     Index Ti = T.index(1);
     Index Tj = T.index(2);
@@ -155,4 +154,70 @@ arma::sp_mat extract_sparse_mat_par(const ITensor& T){
     std::for_each(std::execution::par_unseq, mat_row.begin(), mat_row.end(), lambda);
 
     return Tmat;
+}
+
+
+
+// does not use multi threading either
+struct pointVal{
+    int i;
+    int j;
+    double val;
+};
+
+arma::sp_mat extract_sparse_mat_par2(const ITensor& T){
+    // here T is sparse matrix ITensor
+    Index Ti = T.index(1);
+    Index Tj = T.index(2);
+    auto di = Ti.dim();
+    auto dj = Tj.dim();
+    
+    // obtain the info of non-zero elements, and store them in val_vec
+    std::vector<int> mat_ele(di*dj);
+    std::iota (mat_ele.begin(), mat_ele.end(), 1);
+    std::vector<pointVal> val_vec = {};
+    //std::mutex m;
+    //
+    auto getNon0 = [&](int n){
+        //std::lock_guard<std::mutex> guard(m);
+        int i = (n-1)/dj + 1;
+        int j = (n-1)%dj + 1;
+        double val = eltC(T, Ti=i, Tj=j).real();
+        if (val != 0){
+            struct pointVal pv;
+            pv.i = i; pv.j = j; pv.val = val;
+            val_vec.push_back(pv);
+        }
+    };
+    std::for_each(std::execution::par, mat_ele.begin(), mat_ele.end(), getNon0);
+    
+    // construct a sparse matrix from the pointVal vector
+    arma::sp_mat Tmat(di,dj);
+    auto fillNon0 = [&](pointVal& pv){
+        Tmat(pv.i-1, pv.j-1) = pv.val;
+    };
+    std::for_each(val_vec.begin(), val_vec.end(), fillNon0);
+
+    //float density = Tmat.n_nonzero / Tmat.n_elem;
+    //std::cout << "\ndensity is " << density << std::endl;
+    return Tmat;
+}
+
+
+
+
+arma::sp_mat extract_sparse_mat_par3(const ITensor& T){
+    auto di = T.index(1).dim();
+    auto dj = T.index(2).dim();
+
+    auto extractReal = [](Dense<Real> const& d)
+    {
+        return d.store;
+    };
+
+    auto data_vec = applyFunc(extractReal,T.store());
+
+    arma::mat denseT(&data_vec[0], di, dj, false);
+    arma::sp_mat sparseT(denseT);
+    return sparseT;
 }

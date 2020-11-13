@@ -40,12 +40,12 @@ void extract_cft_data(const arma::sp_mat& TM_sparse){
         printf("\nToo many states requested!\n");
     }
     // eigen
-    printf("\nStart eigenvalue decomposition\n\n");
-    auto eig_start = high_resolution_clock::now();
+    //printf("\nStart eigenvalue decomposition\n\n");
+    //auto eig_start = high_resolution_clock::now();
     cx_vec eigval = eigs_gen(TM_sparse,num_states,"lm",0.0001);
-    auto eig_stop = high_resolution_clock::now();
-    auto eig_duration = duration_cast<seconds>(eig_stop-eig_start).count();
-    printf("Eigenvalue decomposition finished, lasting %d seconds\n\n",eig_duration);
+    //auto eig_stop = high_resolution_clock::now();
+    //auto eig_duration = duration_cast<seconds>(eig_stop-eig_start).count();
+    //printf("Eigenvalue decomposition finished, lasting %d seconds\n\n",eig_duration);
     //eigval.print("eigval=");
     //eigval.print();
     std::vector<double> log_lambdas = {};
