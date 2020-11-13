@@ -33,7 +33,7 @@ using namespace arma;
 #define PI 3.1415926535
 
 
-void extract_cft_data(const arma::sp_mat& TM_sparse){
+void extract_cft_data(arma::sp_mat& TM_sparse){
     //arma::sp_mat TM_sparse(TM_dense);
     int nT = TM_sparse.n_rows;
     if(nT<num_states){
