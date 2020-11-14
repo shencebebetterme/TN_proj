@@ -140,7 +140,7 @@ int main(int argc, char* argv[]){
     //obtain the first k eigenvalues from a sparse matrix
     //arma::sp_mat TM_sparse(TM_dense);
     printf("\nextracting matrix to armadillo matrix\n\n");
-    arma::sp_mat TM_sparse = extract_mat(TMmat);
+    arma::sp_mat TM_sparse = extract_spmat(TMmat);
     //arma::sp_mat TM_sparse(TM_dense);
     printf("\nextracting CFT data\n\n");
     extract_cft_data(TM_sparse);

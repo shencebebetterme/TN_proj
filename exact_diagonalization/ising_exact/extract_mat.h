@@ -32,7 +32,7 @@ using namespace arma;
 
 
 
-arma::sp_mat extract_mat(const ITensor& T){
+arma::sp_mat extract_spmat(const ITensor& T){
     auto di = T.index(1).dim();
     auto dj = T.index(2).dim();
 
@@ -48,6 +48,22 @@ arma::sp_mat extract_mat(const ITensor& T){
     return sparseT;
 }
 
+
+
+arma::mat extract_mat(const ITensor& T){
+    auto di = T.index(1).dim();
+    auto dj = T.index(2).dim();
+
+    auto extractReal = [](Dense<Real> const& d)
+    {
+        return d.store;
+    };
+
+    auto data_vec = applyFunc(extractReal,T.store());
+
+    arma::mat denseT(&data_vec[0], di, dj, true);
+    return denseT;
+}
 
 
 // arma::mat extract_mat(const ITensor& T){
