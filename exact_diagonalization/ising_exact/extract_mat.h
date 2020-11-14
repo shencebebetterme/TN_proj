@@ -14,8 +14,6 @@
 #include <chrono>
 #include <tuple>
 #include <omp.h>
-#include <thread>
-#include <mutex>
 //#include <random>
 #include <execution>
 #include <numeric>

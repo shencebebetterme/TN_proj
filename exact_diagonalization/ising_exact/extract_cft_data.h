@@ -23,7 +23,6 @@
 #include "itensor/util/print_macro.h"
 #include <armadillo>
 
-#include "params.h"
 
 using namespace itensor;
 using namespace std;
@@ -32,6 +31,8 @@ using namespace arma;
 
 #define PI 3.1415926535
 
+extern int len_chain;
+extern int num_states;
 
 void extract_cft_data(arma::sp_mat& TM_sparse){
     //arma::sp_mat TM_sparse(TM_dense);
