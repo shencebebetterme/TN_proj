@@ -13,10 +13,10 @@
 //#include <ctime>
 #include <chrono>
 #include <tuple>
-#include <omp.h>
-#include <thread>
+//#include <omp.h>
+//#include <thread>
 //#include <random>
-#include <execution>
+//#include <execution>
 #include <numeric>
 
 #include "itensor/all.h"

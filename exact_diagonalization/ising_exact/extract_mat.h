@@ -13,9 +13,9 @@
 //#include <ctime>
 #include <chrono>
 #include <tuple>
-#include <omp.h>
+//#include <omp.h>
 //#include <random>
-#include <execution>
+//#include <execution>
 #include <numeric>
 
 
