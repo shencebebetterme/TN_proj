@@ -7,27 +7,13 @@
 
 double beta_c = 0.5*log(1+sqrt(2));//critical beta
 int dim0 = 2;//initial A tensor leg dimension
-int len_chain = 6; // the actual length is len_chain + 1
-int len_chain_L = 3;
-int len_chain_R = 3;
-//int period = len_chain + 1;
+int len_chain = 6; 
 int num_states = 10;// final number of dots in the momentum diagram
 
 
 int main(int argc, char* argv[]){
     if (argc==2) {
         len_chain = atoi(argv[1]);
-    }
-    // decompose the chain into  two parts
-    // stupid way to reduce memory usage and avoid
-    // blas 32bit 64bit dgemm parameter 3 issue
-    if (len_chain%2==0) {
-        len_chain_L = len_chain_R = len_chain/2;
-    }
-    else
-    {
-        len_chain_L = (len_chain-1)/2;
-        len_chain_R = len_chain - len_chain_L;
     }
     
     // initial tensor legs

@@ -31,11 +31,23 @@ using namespace arma;
 
 
 extern int len_chain;
-extern int len_chain_L;
-extern int len_chain_R;
+int len_chain_L = 3;
+int len_chain_R = 3;
 
 // gluing building blocks to a loop
 ITensor glue(const ITensor& A){
+    // decompose the chain into  two parts
+    // stupid way to reduce memory usage and avoid
+    // blas 32bit 64bit dgemm parameter 3 issue
+    if (len_chain%2==0) {
+        len_chain_L = len_chain_R = len_chain/2;
+    }
+    else
+    {
+        len_chain_L = (len_chain-1)/2;
+        len_chain_R = len_chain - len_chain_L;
+    }
+
     Index u = A.index(1);
     Index r = A.index(2);
     Index d = A.index(3);
