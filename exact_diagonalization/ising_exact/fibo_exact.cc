@@ -80,7 +80,7 @@ int main(int argc, char* argv[]){
     BB /= trBB;
 
 
-    ITensor TMmat = glue(BB);
+    ITensor TMmat = glue(VaV);
     //Index Mi = M.index(1);
     //Index Mj = M.index(2);
     //auto TM_dense = extract_mat(TMmat);
@@ -88,6 +88,7 @@ int main(int argc, char* argv[]){
     //arma::sp_mat TM_sparse(TM_dense);
     printf("\nextracting matrix to armadillo matrix\n\n");
     arma::sp_mat TM_sparse = extract_spmat(TMmat);
+    TM_sparse *= TM_sparse.t();
     //arma::sp_mat TM_sparse(TM_dense);
     printf("\nextracting CFT data\n\n");
     extract_cft_data(TM_sparse);
