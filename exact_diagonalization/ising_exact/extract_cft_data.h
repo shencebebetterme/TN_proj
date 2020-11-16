@@ -70,3 +70,32 @@ void extract_cft_data(arma::sp_mat& TM_sparse){
         printf("%6.6f\t%6.6f\n",scaling_dims[i],spins[i]);
     }
 }
+
+
+// for the case l=n
+// separate c first, then calculate scaling dimension
+void extract_cft_data2(arma::sp_mat& TM_sparse){
+    int nT = TM_sparse.n_rows;
+    if(nT<num_states){
+        printf("\nToo many states requested!\n");
+    }
+    //
+    cx_vec eigval = eigs_gen(TM_sparse,num_states,"lm",0.0001);
+    eigval.print();
+    //
+    auto vec = eigval;
+    for_each(vec.begin(), vec.end(), [](auto& lambda){
+        lambda = (std::log(lambda)/(2*PI)).real();
+    });
+    vec.print();
+    //
+    double c = 12*vec[0].real();
+    printf("\nthe central charge is %d\n", c);
+    //
+    auto scaldim = vec;
+    for_each(scaldim.begin(), scaldim.end(), [=](auto& x){
+        x = -(x-c/12).real();
+    });
+    //
+    scaldim.print();
+}
