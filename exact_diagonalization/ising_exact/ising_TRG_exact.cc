@@ -1,3 +1,5 @@
+#define ARMA_USE_HDF5
+
 #include "inc.h"
 #include "glue.h"
 #include "extract_mat.h"
@@ -116,7 +118,9 @@ int main(int argc, char* argv[]){
 
 	printfln("log(Z)/N_s = %.12f\n", pfps);
 
-
+    ITensor Amat = A*delta(l,r);
+    arma::mat Amat_dense = extract_mat(Amat);
+    Amat_dense.save(hdf5_name("A.h5","data"));
     // ITensor TMmat = glue(A);
     // //Index Mi = M.index(1);
     // //Index Mj = M.index(2);
