@@ -1,4 +1,4 @@
-#define ARMA_USE_HDF5
+//#define ARMA_USE_HDF5
 
 #include "inc.h"
 #include "glue.h"
@@ -8,7 +8,7 @@
 
 
 double beta_c = 0.5*log(1+sqrt(2));//critical beta
-double beta_ = 0.5;
+double beta_ = beta_c;
 int dim0 = 2;//initial A tensor leg dimension
 int len_chain = 3; 
 int num_states = 10;// final number of dots in the momentum diagram
@@ -18,9 +18,10 @@ int topscale = 10;
 
 
 int main(int argc, char* argv[]){
-    if (argc==3) {
+    if (argc==4) {
         len_chain = atoi(argv[1]);
-        topscale = atoi(argv[2]);
+        maxdim = atoi(argv[2]);
+        topscale = atoi(argv[3]);
     }
     
     // initial tensor legs
@@ -118,23 +119,19 @@ int main(int argc, char* argv[]){
 
 	printfln("log(Z)/N_s = %.12f\n", pfps);
 
-    ITensor Amat = A*delta(l,r);
-    arma::mat Amat_dense = extract_mat(Amat);
-    Amat_dense.save(hdf5_name("A.h5","data"));
-    // ITensor TMmat = glue(A);
-    // //Index Mi = M.index(1);
-    // //Index Mj = M.index(2);
-    // //auto TM_dense = extract_mat(TMmat);
-    // //obtain the first k eigenvalues from a sparse matrix
-    // //arma::sp_mat TM_sparse(TM_dense);
-    // printf("\nextracting matrix to armadillo matrix\n\n");
-    // arma::sp_mat TM_sparse = extract_spmat(TMmat);
-    // //arma::sp_mat TM_sparse(TM_dense);
-    // printf("\nextracting CFT data\n\n");
-    // extract_cft_data(TM_sparse);
-    // ITensor Mmat = A*delta(l,r);
-    // arma::sp_mat M_sparse = extract_spmat(Mmat);
-    // extract_cft_data2(M_sparse);
+
+    ITensor Amat = (len_chain>1) ? glue(A) : A*delta(l,r);
+    //Index Mi = M.index(1);
+    //Index Mj = M.index(2);
+    //auto TM_dense = extract_mat(TMmat);
+    //obtain the first k eigenvalues from a sparse matrix
+    //arma::sp_mat TM_sparse(TM_dense);
+    //ITensor Amat = A*delta(l,r);
+    printf("\nextracting matrix to armadillo matrix\n\n");
+    arma::sp_mat A_sparse = extract_spmat(Amat);
+    //arma::sp_mat TM_sparse(TM_dense);
+    printf("\nextracting CFT data\n\n");
+    extract_cft_data(A_sparse);
 
     return 0;
 }
