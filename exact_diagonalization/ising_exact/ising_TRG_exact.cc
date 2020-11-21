@@ -7,10 +7,10 @@
 
 
 
-double beta_c = 0.5*log(1+sqrt(2));//critical beta
+const double beta_c = 0.5*log(1+sqrt(2));//critical beta
 double beta_ = beta_c;
 int dim0 = 2;//initial A tensor leg dimension
-int len_chain = 3; 
+int len_chain = 1; 
 int num_states = 10;// final number of dots in the momentum diagram
 //
 int maxdim = 20;

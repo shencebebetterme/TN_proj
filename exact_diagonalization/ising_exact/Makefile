@@ -8,7 +8,7 @@ LIBRARY_DIR=/home/ce18/ITensor
 ARMA_FLAGS=-I/home/ce18/armadillo-code/include -DARMA_DONT_USE_WRAPPER -larpack
 
 
-APP=ising_TRG_exact
+APP=ising_dig_hole
 
 CCFILES=$(APP).cc
 
