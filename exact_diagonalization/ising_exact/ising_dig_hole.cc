@@ -13,17 +13,20 @@ int dim0 = 2;//initial A tensor leg dimension
 int len_chain = 1; 
 int num_states = 10;// final number of dots in the momentum diagram
 //
-int maxdim = 4;
-int pre_scale = 1;
-int top_scale = pre_scale + 2;
+int maxdim = 5;
+int pre_scale = 8;
+int dur_scale = 2;
+
 
 
 int main(int argc, char* argv[]){
-    if (argc==3) {
-        pre_scale = atoi(argv[1]);
-        maxdim = atoi(argv[2]);
+    if (argc==4) {
+        maxdim = atoi(argv[1]);
+        pre_scale = atoi(argv[2]);
+        dur_scale = atoi(argv[3]);
         // topscale = atoi(argv[3]);
     }
+    int top_scale = pre_scale + dur_scale;
     
     ITensor As; // A tensor at pre-scale
     ITensor As4; // 4 A tensor at pre-scale
@@ -71,7 +74,7 @@ int main(int argc, char* argv[]){
     // Print(TrA);
     PrintData(A);
     ITensor Acopy = A;
-    Acopy *= delta(l,r); PrintData(Acopy);
+    // Acopy *= delta(l,r); PrintData(Acopy);
 
     //keep track of the normalization factor
     //Real TrA = elt(A * delta(l, r) * delta(u, d));
@@ -175,52 +178,69 @@ int main(int argc, char* argv[]){
 
     ITensor T = As4;
     //
-    ITensor U1 = vec_U[0];
-    ITensor R1 = vec_R[0];
-    ITensor D1 = vec_D[0];
-    ITensor L1 = vec_L[0];
-    //
-    Print(T);
-    T *= (U1 * delta(u1,U1.index(1)) * delta(u2,U1.index(3)));
-    T *= (D1 * delta(d1,D1.index(1)) * delta(d2,D1.index(3)));
-    L1.prime(); R1.prime();
-    T *= (R1 * delta(r1,R1.index(1)) * delta(r2,R1.index(3)));
-    T *= (L1 * delta(l1,L1.index(1)) * delta(l2,L1.index(3)));
-    Print(T);
-    // relabel the external legs
-    u1 = U1.index(4);
-    u2 = R1.index(2);
-    r1 = R1.index(4);
-    r2 = D1.index(4);
-    d2 = D1.index(2);
-    d1 = L1.index(4);
-    l2 = L1.index(2);
-    l1 = U1.index(2); 
+    //todo: i+= 2
+    for(int i=0; i<dur_scale; i++){
+        ITensor U1 = vec_U[i];
+        ITensor R1 = vec_R[i];
+        ITensor D1 = vec_D[i];
+        ITensor L1 = vec_L[i];
+        printf("\n\n applyint the %d-th layer\n\n", i+1);
+        Print(U1); Print(R1); Print(D1); Print(L1);
+        //
+        Print(T);
+        T *= (U1 * delta(u1,U1.index(1)) * delta(u2,U1.index(3)));
+        T *= (D1 * delta(d1,D1.index(1)) * delta(d2,D1.index(3)));
+        L1.prime(); R1.prime();
+        T *= (R1 * delta(r1,R1.index(1)) * delta(r2,R1.index(3)));
+        T *= (L1 * delta(l1,L1.index(1)) * delta(l2,L1.index(3)));
+        Print(T);
+        // relabel the external legs
+        // // todo: this relabeling is different for the second one
+        // u1 = U1.index(4);
+        // u2 = R1.index(2);
+        // r1 = R1.index(4);
+        // r2 = D1.index(4);
+        // d2 = D1.index(2);
+        // d1 = L1.index(4);
+        // l2 = L1.index(2);
+        // l1 = U1.index(2); 
+        //
+        u1 = T.index(2);
+        u2 = T.index(5);
+        r1 = T.index(6);
+        r2 = T.index(4);
+        d2 = T.index(3);
+        d1 = T.index(8);
+        l2 = T.index(7);
+        l1 = T.index(1); 
+    }
 
-    ITensor U2 = vec_U[1];
-    ITensor R2 = vec_R[1];
-    ITensor D2 = vec_D[1];
-    ITensor L2 = vec_L[1];
-    //
-    Print(T);
-    T *= (U2 * delta(u1,U2.index(1)) * delta(u2,U2.index(3)));
-    T *= (D2 * delta(d1,D2.index(1)) * delta(d2,D2.index(3)));
-    L2.prime(); R2.prime();
-    T *= (R2 * delta(r1,R2.index(1)) * delta(r2,R2.index(3)));
-    T *= (L2 * delta(l1,L2.index(1)) * delta(l2,L2.index(3)));
-    Print(T);
-    // relabel the external legs
-    l1 = L2.index(4);
-    u1 = L2.index(2);
-    u2 = U2.index(2);
-    r1 = U2.index(4);
-    r2 = R2.index(2);
-    d2 = R2.index(4);
-    d1 = D2.index(4);
-    l2 = D2.index(2);
-    Print(T);
+    // ITensor U2 = vec_U[1];
+    // ITensor R2 = vec_R[1];
+    // ITensor D2 = vec_D[1];
+    // ITensor L2 = vec_L[1];
+    // //
+    // // Print(T);
+    // T *= (U2 * delta(u1,U2.index(1)) * delta(u2,U2.index(3)));
+    // T *= (D2 * delta(d1,D2.index(1)) * delta(d2,D2.index(3)));
+    // L2.prime(); R2.prime();
+    // T *= (R2 * delta(r1,R2.index(1)) * delta(r2,R2.index(3)));
+    // T *= (L2 * delta(l1,L2.index(1)) * delta(l2,L2.index(3)));
+    // // Print(T);
+    // // relabel the external legs
+    // l1 = L2.index(4);
+    // u1 = L2.index(2);
+    // u2 = U2.index(2);
+    // r1 = U2.index(4);
+    // r2 = R2.index(2);
+    // d2 = R2.index(4);
+    // d1 = D2.index(4);
+    // l2 = D2.index(2);
+    // Print(T);
+
 
     //match legs of As4 and T 
+    ITensor As4c = As4;
     As4 *= delta(l1,As4.index(1));
     As4 *= delta(u1,As4.index(2));
     As4 *= delta(u2,As4.index(3));
@@ -229,6 +249,19 @@ int main(int argc, char* argv[]){
     As4 *= delta(d2,As4.index(6));
     As4 *= delta(d1,As4.index(7));
     As4 *= delta(l2,As4.index(8));
+
+    // //check symmetry of As4
+    // // As4 doesn't have rotation symmetry
+    // As4c *= delta(l1,As4c.index(1+1));
+    // As4c *= delta(u1,As4c.index(2+1));
+    // As4c *= delta(u2,As4c.index(3+1));
+    // As4c *= delta(r1,As4c.index(4+1));
+    // As4c *= delta(r2,As4c.index(5+1));
+    // As4c *= delta(d2,As4c.index(6+1));
+    // As4c *= delta(d1,As4c.index(7+1));
+    // As4c *= delta(l2,As4c.index(8+1-8));
+
+    std::cout<< norm(As4-As4c) << std::endl;
 
     //normalization
     T /= norm(T);
